@@ -84,7 +84,7 @@
 ## 运行
 
 ```bash
-cd /Users/brady/Documents/codebase/enjoy
+cd /path/to/happy-learning
 python3 -m http.server 8765
 ```
 
@@ -100,6 +100,15 @@ iPad 上玩：
 > 直接双击 `index.html` 在桌面 Chrome 里也能玩（已实测，音频和本地进度都正常）；但 iPad 上建议用上面的本地服务器，或者部署到 Netlify / Vercel 之类的静态托管。
 
 第一次进入后点「开始玩」才会出声——这是浏览器的自动播放限制，不是 bug。
+
+---
+
+## 部署（GitHub Pages）
+
+- `main` 是源码分支；每次 push 后，`.github/workflows/sync-pages.yml` 会把 `main` 同步到 `gh-pages`。
+- GitHub Pages 从 `gh-pages` 根目录发布；`gh-pages` 更新后会自动重新构建。
+- 线上地址：<https://limengke123.github.io/happy-learning/>
+- 如果换仓库或 fork：在仓库 Settings → Pages 里把 Source 设为 `gh-pages` / root；或者直接推一个 `gh-pages` 分支。
 
 ---
 
