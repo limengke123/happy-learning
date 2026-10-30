@@ -130,7 +130,13 @@ async def main():
         *(synth(lang, name, text, rate, args.force, sem, counter, len(jobs)) for lang, name, text, rate in jobs)
     )
     shutil.rmtree(TMP, ignore_errors=True)
-    print(f"Done: {counter[0]} clips in {AUDIO}")
+
+    # Keep the PWA offline-cache list in sync with the generated clips.
+    manifest = sorted(p.relative_to(ROOT).as_posix() for p in AUDIO.glob("*/*.mp3"))
+    (AUDIO / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(f"Done: {counter[0]} clips in {AUDIO} ({len(manifest)} in manifest)")
 
 
 if __name__ == "__main__":

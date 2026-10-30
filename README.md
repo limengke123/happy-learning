@@ -4,7 +4,8 @@
 一轮 3–5 分钟，到点就结束；家长长按进入设置。
 
 **在线玩：** <https://limengke123.github.io/happy-learning/>  
-**源码：** <https://github.com/limengke123/happy-learning>
+**源码：** <https://github.com/limengke123/happy-learning>  
+**安装成 App：** 手机用上面的 HTTPS 地址打开，Safari / Chrome 里「添加到主屏幕」。
 
 ![游戏界面](shots/showcase-game.png)
 
@@ -56,7 +57,7 @@
 - **结束即停**：一轮结束后进入「星星 + 小篮子」结算页，不提供无限下一轮；「再玩一次」需要家长/孩子明确再点一次。
 - **三档语速**：慢 0.8× / 标准 1.0× / 快 1.2×，只改变播放速度，不改变句子难度。
 - **家长区**：长按首页的「家长设置」1 秒进入；可分别改英语/法语难度、切换本轮语言、设置次数、语速、文字提示、查看每个词的熟练度、清空记录。普通点一下只会提示「长按」。
-- **离线、无账号、无上传**：所有进度存在本机 `localStorage`，音频是本地文件。
+- **离线 / PWA、无账号、无上传**：所有进度存在本机 `localStorage`，音频是本地文件；安装成 App 后可缓存全部音频离线玩。
 
 ---
 
@@ -100,6 +101,34 @@ iPad 上玩：
 > 直接双击 `index.html` 在桌面 Chrome 里也能玩（已实测，音频和本地进度都正常）；但 iPad 上建议用上面的本地服务器，或者部署到 Netlify / Vercel 之类的静态托管。
 
 第一次进入后点「开始玩」才会出声——这是浏览器的自动播放限制，不是 bug。
+
+---
+
+## 安装成 App（PWA）
+
+线上地址已经是 PWA：
+
+- **iPhone / iPad**：用 **Safari** 打开 <https://limengke123.github.io/happy-learning/> → 点底部「分享」→「添加到主屏幕」。首页也有「安装 App」按钮，会弹出图文步骤。
+- **Android**：用 **Chrome** 打开 → 右上角菜单 →「安装应用」/「添加到主屏幕」。
+- 安装后会以独立窗口、全屏运行，有自己的图标；`manifest.webmanifest` + `sw.js` 负责 App 体验和缓存。
+
+### 离线
+
+- 首次在线打开后，界面本身会被 Service Worker 缓存；之后断网也能打开。
+- 想让**音频**也离线：家长设置 → **离线使用** →「下载离线音频（约 8 MB）」。下载完成后，飞行模式也能完整玩。
+- 不下载全部音频也可以；听过的音频会在播放时自动缓存。
+
+> **重要：** Service Worker / PWA 安装需要 **HTTPS 或 localhost**。  
+> 局域网地址 `http://192.168.x.x:8765` 只能在线玩，不能安装成 App、也不能离线；手机上请用上面的 GitHub Pages HTTPS 地址。
+
+### 开发者注意
+
+改代码后如果发现还是旧界面，把这两个版本号一起加一：
+
+- `index.html` 里的 `PWA_CACHE`（当前 `momo-static-v1`）
+- `sw.js` 里的 `VERSION`（当前 `momo-static-v1`）
+
+它们必须保持一致，否则离线音频缓存和 Service Worker 会对不上。
 
 ---
 
