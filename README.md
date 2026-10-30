@@ -3,6 +3,9 @@
 给 **2 岁 10 个月** 的双语宝宝做的「听音找图」小游戏：看图片、听英语/法语、点一下。
 一轮 3–5 分钟，到点就结束；家长长按进入设置。
 
+**在线玩：** <https://limengke123.github.io/happy-learning/>  
+**源码：** <https://github.com/limengke123/happy-learning>
+
 ![游戏界面](shots/showcase-game.png)
 
 ---
