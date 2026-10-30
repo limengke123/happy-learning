@@ -90,7 +90,11 @@ def main():
     base.resize((192, 192), Image.LANCZOS).save(OUT / "icon-192.png", optimize=True)
     base.resize((180, 180), Image.LANCZOS).save(OUT / "apple-touch-icon.png", optimize=True)
     base.resize((32, 32), Image.LANCZOS).save(OUT / "favicon-32.png", optimize=True)
-    draw_icon(maskable=True).resize((512, 512), Image.LANCZOS).save(OUT / "icon-maskable-512.png", optimize=True)
+    # Android adaptive masks can crop the edges; inset the art into the safe zone.
+    maskable = Image.new("RGB", (S, S), "#FFE7C2")
+    art = base.resize((int(S * .82), int(S * .82)), Image.LANCZOS)
+    maskable.paste(art, ((S - art.width) // 2, (S - art.height) // 2))
+    maskable.resize((512, 512), Image.LANCZOS).save(OUT / "icon-maskable-512.png", optimize=True)
     print("icons written to", OUT)
 
 
