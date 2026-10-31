@@ -36,6 +36,14 @@ GENERIC = {
     "intro": {"en": "Let's play!", "fr": "On joue !"},
     "retry": {"en": "Hmm... try again.", "fr": "Hmm... essaie encore."},
     "end": {"en": "You did it! Bravo!", "fr": "C'est fini ! Bravo !"},
+    "check": {
+        "en": "Let's check your words! Listen carefully.",
+        "fr": "On vérifie les mots ! Écoute bien.",
+    },
+    "check_end": {
+        "en": "Good job! Let's look at the words together.",
+        "fr": "Bravo ! Regardons les mots ensemble.",
+    },
 }
 
 

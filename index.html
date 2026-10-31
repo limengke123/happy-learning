@@ -497,7 +497,7 @@
   /* ---------------- end ---------------- */
   #screen-end {
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     background: radial-gradient(100% 80% at 50% 0%, #fffdf6, #ffefd6 60%, #ffe4c1);
   }
   .end-wrap {
@@ -647,6 +647,7 @@
   .pgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px 10px; margin-top: 10px; }
   .pcell { display: flex; align-items: center; gap: 7px; padding: 4px 5px; border-radius: 9px; background: #fdf6ea; }
   .pemoji { font-size: 18px; width: 22px; text-align: center; }
+  .pname { flex: 0 1 76px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 700; color: #7a5e45; }
   .pbars { display: flex; flex-direction: column; gap: 3px; flex: 1; }
   .pbar { display: flex; gap: 3px; }
   .pbar i { display: block; width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #ecdfcd; }
@@ -701,6 +702,105 @@
   @keyframes floaty { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-9px) rotate(4deg); } }
   @keyframes tprBounce { 0%, 100% { transform: scale(1) rotate(-2deg); } 50% { transform: scale(1.08) rotate(2deg); } }
 
+  /* ---------------- word-bank + monthly check ---------------- */
+  .card .art.art-svg { width: 74%; height: 74%; display: grid; place-items: center; font-size: 0; }
+  .card .art.art-svg svg { width: 100%; height: 100%; display: block; }
+  .check-count {
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .82);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .04em;
+    box-shadow: 0 2px 0 rgba(58, 42, 30, .05);
+  }
+  .review-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: #fdf6ea;
+  }
+  .review-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .review-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left; }
+  .review-copy b { font-size: 14px; font-weight: 900; }
+  .review-copy small { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .review-row .btn-soft { flex: 0 0 auto; margin-top: 0; padding: 10px 14px; font-size: 12px; }
+  .review-row .btn-soft[disabled] { opacity: .48; }
+  .pack-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #eadbc8;
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .check-last { font-size: 11px; line-height: 1.55; color: var(--muted); font-weight: 600; }
+  .pack-preview { margin-top: 2px; }
+  .pack-preview > summary { cursor: pointer; list-style: none; font-size: 11px; font-weight: 800; color: var(--muted); }
+  .pack-preview > summary::-webkit-details-marker { display: none; }
+  .pack-preview > summary::after { content: "▾"; margin-left: 4px; }
+  .pack-preview[open] > summary::after { content: "▴"; }
+  .pack-words { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .check-last-line { margin-bottom: 5px; }
+  .check-last-missed, .report-missed { display: flex; flex-wrap: wrap; gap: 5px; }
+  .miss {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 1px 0 rgba(90, 60, 40, .08);
+    color: #6b5a49;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .miss b { font-size: 14px; font-weight: 400; }
+  .miss.all { background: #e8f7ef; color: #2f6b4f; }
+  .bank-summary { margin: 8px 0 0; font-size: 11px; font-weight: 700; color: var(--muted); }
+  .bank-filter { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 2px; }
+  .bank-filter button {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f6ead9;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .bank-filter button.sel { background: var(--ink); color: #fff8ec; }
+  .pgroup { margin-top: 12px; }
+  .pgroup-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+  .pgroup-head b { font-size: 12px; font-weight: 900; }
+  .pgroup-head span { font-size: 10px; font-weight: 600; color: var(--muted); }
+  .pgroup .pgrid { margin-top: 0; }
+  .end-report {
+    width: 100%;
+    max-height: 36vh;
+    overflow-y: auto;
+    padding: 12px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .72);
+    box-shadow: 0 3px 0 rgba(160, 110, 50, .08);
+    text-align: left;
+  }
+  .report-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-weight: 900; color: var(--coral-dark); }
+  .report-head #report-score { font-size: 18px; }
+  .report-head #report-pct { font-size: 22px; color: var(--ink); }
+  .report-meta { margin-top: 2px; font-size: 11px; color: var(--muted); font-weight: 700; }
+  .end-report .report-missed { margin-top: 8px; }
+  #screen-end { overflow-y: auto; }
+  .end-wrap { margin: auto 0; padding: 8px 0; }
+  #screen-end.check .end-momo { width: clamp(74px, 13vh, 120px); }
+  .check-sheet { width: min(440px, 100%); }
+  .check-sheet .start, .check-sheet .btn-soft { width: 100%; }
+  .check-sheet .start { margin-top: 16px; box-shadow: 0 5px 0 #cfb393; }
+  .check-sheet .check-note { font-size: 12px; color: var(--muted); font-weight: 600; }
   .momo-bob { transform-box: fill-box; transform-origin: bottom center; animation: bob 4.2s ease-in-out infinite; }
   .eyes { transform-box: fill-box; transform-origin: center; animation: blink 5.4s infinite; }
 
@@ -709,6 +809,11 @@
     h1 { font-size: clamp(24px, 5vw, 36px); }
     .home-wrap { gap: 4px; padding-top: 8px; padding-bottom: 12px; }
     .brand { display: none; }
+    #screen-end.check .end-momo { display: none; }
+    #screen-end.check h2 { font-size: 26px; }
+    #screen-end.check .star-line #end-stars { font-size: 40px; }
+    #screen-end.check .end-report { max-height: 29vh; }
+    #screen-end.check .end-wrap { gap: 4px; }
   }
   @media (max-width: 380px) {
     .mode-pill { padding: 8px 10px; font-size: 11px; }
@@ -716,6 +821,9 @@
     .caption { font-size: 10px; }
     .end-basket { gap: 4px; padding: 6px 12px; }
     .end-basket span { font-size: 24px; }
+    .seg button { font-size: 11px; padding: 9px 4px; }
+    #settings-pos button { font-size: 10.5px; padding: 9px 2px; }
+    .review-row .btn-soft { padding: 9px 10px; font-size: 11px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
@@ -731,6 +839,7 @@
       "id": "apple",
       "emoji": "🍎",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "an apple",
         "praise": "An apple! Well done!",
@@ -753,6 +862,7 @@
       "id": "banana",
       "emoji": "🍌",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "a banana",
         "praise": "A banana! Well done!",
@@ -775,6 +885,7 @@
       "id": "strawberry",
       "emoji": "🍓",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "a strawberry",
         "praise": "A strawberry! Well done!",
@@ -797,6 +908,7 @@
       "id": "milk",
       "emoji": "🥛",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "milk",
         "praise": "Milk! Well done!",
@@ -819,6 +931,7 @@
       "id": "egg",
       "emoji": "🥚",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "an egg",
         "praise": "An egg! Well done!",
@@ -841,6 +954,7 @@
       "id": "water",
       "emoji": "💧",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "water",
         "praise": "Water! Well done!",
@@ -863,6 +977,7 @@
       "id": "cat",
       "emoji": "🐱",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a cat",
         "praise": "A cat! Well done!",
@@ -885,6 +1000,7 @@
       "id": "dog",
       "emoji": "🐶",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a dog",
         "praise": "A dog! Well done!",
@@ -907,6 +1023,7 @@
       "id": "duck",
       "emoji": "🦆",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a duck",
         "praise": "A duck! Well done!",
@@ -929,6 +1046,7 @@
       "id": "fish",
       "emoji": "🐟",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a fish",
         "praise": "A fish! Well done!",
@@ -951,6 +1069,7 @@
       "id": "bear",
       "emoji": "🐻",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a bear",
         "praise": "A bear! Well done!",
@@ -973,6 +1092,7 @@
       "id": "bird",
       "emoji": "🐦",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a bird",
         "praise": "A bird! Well done!",
@@ -995,6 +1115,7 @@
       "id": "bunny",
       "emoji": "🐰",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a bunny",
         "praise": "A bunny! Well done!",
@@ -1017,6 +1138,7 @@
       "id": "ball",
       "emoji": "⚽",
       "cat": "toy",
+      "pos": "noun",
       "en": {
         "phrase": "a ball",
         "praise": "A ball! Well done!",
@@ -1039,6 +1161,7 @@
       "id": "car",
       "emoji": "🚗",
       "cat": "toy",
+      "pos": "noun",
       "en": {
         "phrase": "a car",
         "praise": "A car! Well done!",
@@ -1061,6 +1184,7 @@
       "id": "book",
       "emoji": "📖",
       "cat": "toy",
+      "pos": "noun",
       "en": {
         "phrase": "a book",
         "praise": "A book! Well done!",
@@ -1083,6 +1207,7 @@
       "id": "shoe",
       "emoji": "👟",
       "cat": "toy",
+      "pos": "noun",
       "en": {
         "phrase": "a shoe",
         "praise": "A shoe! Well done!",
@@ -1105,6 +1230,7 @@
       "id": "spoon",
       "emoji": "🥄",
       "cat": "toy",
+      "pos": "noun",
       "en": {
         "phrase": "a spoon",
         "praise": "A spoon! Well done!",
@@ -1127,6 +1253,7 @@
       "id": "star",
       "emoji": "⭐",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "a star",
         "praise": "A star! Well done!",
@@ -1149,6 +1276,7 @@
       "id": "moon",
       "emoji": "🌙",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "the moon",
         "praise": "The moon! Well done!",
@@ -1171,6 +1299,7 @@
       "id": "sun",
       "emoji": "☀️",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "the sun",
         "praise": "The sun! Well done!",
@@ -1193,6 +1322,7 @@
       "id": "flower",
       "emoji": "🌸",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "a flower",
         "praise": "A flower! Well done!",
@@ -1215,6 +1345,7 @@
       "id": "tree",
       "emoji": "🌳",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "a tree",
         "praise": "A tree! Well done!",
@@ -1237,6 +1368,7 @@
       "id": "house",
       "emoji": "🏠",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "a house",
         "praise": "A house! Well done!",
@@ -1259,6 +1391,7 @@
       "id": "elsa",
       "emoji": "👸",
       "cat": "magic",
+      "pos": "noun",
       "en": {
         "phrase": "Elsa",
         "praise": "Elsa! Well done!",
@@ -1281,6 +1414,7 @@
       "id": "snowflake",
       "emoji": "❄️",
       "cat": "magic",
+      "pos": "noun",
       "en": {
         "phrase": "a snowflake",
         "praise": "A snowflake! Well done!",
@@ -1303,6 +1437,7 @@
       "id": "ice",
       "emoji": "🧊",
       "cat": "magic",
+      "pos": "noun",
       "en": {
         "phrase": "ice",
         "praise": "Ice! Well done!",
@@ -1325,6 +1460,7 @@
       "id": "magic",
       "emoji": "🪄",
       "cat": "magic",
+      "pos": "noun",
       "en": {
         "phrase": "a magic wand",
         "praise": "A magic wand! Well done!",
@@ -1347,6 +1483,7 @@
       "id": "castle",
       "emoji": "🏰",
       "cat": "magic",
+      "pos": "noun",
       "en": {
         "phrase": "a castle",
         "praise": "A castle! Well done!",
@@ -1369,6 +1506,7 @@
       "id": "elephant",
       "emoji": "🐘",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "an elephant",
         "praise": "An elephant! Well done!",
@@ -1391,6 +1529,7 @@
       "id": "lion",
       "emoji": "🦁",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a lion",
         "praise": "A lion! Well done!",
@@ -1413,6 +1552,7 @@
       "id": "tiger",
       "emoji": "🐯",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a tiger",
         "praise": "A tiger! Well done!",
@@ -1435,6 +1575,7 @@
       "id": "monkey",
       "emoji": "🐵",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a monkey",
         "praise": "A monkey! Well done!",
@@ -1457,6 +1598,7 @@
       "id": "giraffe",
       "emoji": "🦒",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a giraffe",
         "praise": "A giraffe! Well done!",
@@ -1479,6 +1621,7 @@
       "id": "penguin",
       "emoji": "🐧",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a penguin",
         "praise": "A penguin! Well done!",
@@ -1501,6 +1644,7 @@
       "id": "zebra",
       "emoji": "🦓",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a zebra",
         "praise": "A zebra! Well done!",
@@ -1523,6 +1667,7 @@
       "id": "turtle",
       "emoji": "🐢",
       "cat": "animal",
+      "pos": "noun",
       "en": {
         "phrase": "a turtle",
         "praise": "A turtle! Well done!",
@@ -1545,6 +1690,7 @@
       "id": "train",
       "emoji": "🚂",
       "cat": "vehicle",
+      "pos": "noun",
       "en": {
         "phrase": "a train",
         "praise": "A train! Well done!",
@@ -1567,6 +1713,7 @@
       "id": "airplane",
       "emoji": "✈️",
       "cat": "vehicle",
+      "pos": "noun",
       "en": {
         "phrase": "an airplane",
         "praise": "An airplane! Well done!",
@@ -1589,6 +1736,7 @@
       "id": "boat",
       "emoji": "⛵",
       "cat": "vehicle",
+      "pos": "noun",
       "en": {
         "phrase": "a boat",
         "praise": "A boat! Well done!",
@@ -1611,6 +1759,7 @@
       "id": "bicycle",
       "emoji": "🚲",
       "cat": "vehicle",
+      "pos": "noun",
       "en": {
         "phrase": "a bicycle",
         "praise": "A bicycle! Well done!",
@@ -1633,6 +1782,7 @@
       "id": "rocket",
       "emoji": "🚀",
       "cat": "vehicle",
+      "pos": "noun",
       "en": {
         "phrase": "a rocket",
         "praise": "A rocket! Well done!",
@@ -1655,6 +1805,7 @@
       "id": "bus",
       "emoji": "🚌",
       "cat": "vehicle",
+      "pos": "noun",
       "en": {
         "phrase": "a bus",
         "praise": "A bus! Well done!",
@@ -1677,6 +1828,7 @@
       "id": "helicopter",
       "emoji": "🚁",
       "cat": "vehicle",
+      "pos": "noun",
       "en": {
         "phrase": "a helicopter",
         "praise": "A helicopter! Well done!",
@@ -1699,6 +1851,7 @@
       "id": "orange",
       "emoji": "🍊",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "an orange",
         "praise": "An orange! Well done!",
@@ -1721,6 +1874,7 @@
       "id": "grapes",
       "emoji": "🍇",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "grapes",
         "praise": "Grapes! Well done!",
@@ -1743,6 +1897,7 @@
       "id": "carrot",
       "emoji": "🥕",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "a carrot",
         "praise": "A carrot! Well done!",
@@ -1765,6 +1920,7 @@
       "id": "cake",
       "emoji": "🍰",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "a cake",
         "praise": "A cake! Well done!",
@@ -1787,6 +1943,7 @@
       "id": "cookie",
       "emoji": "🍪",
       "cat": "food",
+      "pos": "noun",
       "en": {
         "phrase": "a cookie",
         "praise": "A cookie! Well done!",
@@ -1809,6 +1966,7 @@
       "id": "rainbow",
       "emoji": "🌈",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "a rainbow",
         "praise": "A rainbow! Well done!",
@@ -1831,6 +1989,7 @@
       "id": "cloud",
       "emoji": "☁️",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "a cloud",
         "praise": "A cloud! Well done!",
@@ -1853,6 +2012,7 @@
       "id": "rain",
       "emoji": "🌧️",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "rain",
         "praise": "Rain! Well done!",
@@ -1875,6 +2035,7 @@
       "id": "mountain",
       "emoji": "⛰️",
       "cat": "nature",
+      "pos": "noun",
       "en": {
         "phrase": "a mountain",
         "praise": "A mountain! Well done!",
@@ -1897,6 +2058,7 @@
       "id": "chair",
       "emoji": "🪑",
       "cat": "home",
+      "pos": "noun",
       "en": {
         "phrase": "a chair",
         "praise": "A chair! Well done!",
@@ -1919,6 +2081,7 @@
       "id": "bed",
       "emoji": "🛏️",
       "cat": "home",
+      "pos": "noun",
       "en": {
         "phrase": "a bed",
         "praise": "A bed! Well done!",
@@ -1941,6 +2104,7 @@
       "id": "clock",
       "emoji": "⏰",
       "cat": "home",
+      "pos": "noun",
       "en": {
         "phrase": "a clock",
         "praise": "A clock! Well done!",
@@ -1963,6 +2127,7 @@
       "id": "umbrella",
       "emoji": "☂️",
       "cat": "home",
+      "pos": "noun",
       "en": {
         "phrase": "an umbrella",
         "praise": "An umbrella! Well done!",
@@ -1985,6 +2150,7 @@
       "id": "hand",
       "emoji": "✋",
       "cat": "body",
+      "pos": "noun",
       "en": {
         "phrase": "a hand",
         "praise": "A hand! Well done!",
@@ -2007,6 +2173,7 @@
       "id": "eyes",
       "emoji": "👀",
       "cat": "body",
+      "pos": "noun",
       "en": {
         "phrase": "eyes",
         "praise": "Eyes! Well done!",
@@ -2029,6 +2196,7 @@
       "id": "nose",
       "emoji": "👃",
       "cat": "body",
+      "pos": "noun",
       "en": {
         "phrase": "a nose",
         "praise": "A nose! Well done!",
@@ -2046,6 +2214,1021 @@
           "C'est un nez pour sentir. Trouve le nez."
         ]
       }
+    },
+    {
+      "id": "teeth",
+      "emoji": "🦷",
+      "cat": "body",
+      "pos": "noun",
+      "en": {
+        "phrase": "teeth",
+        "praise": "Teeth! You found it!",
+        "prompts": [
+          "Teeth. Find the teeth.",
+          "You use them to bite and chew. Find the teeth.",
+          "You use them to bite and chew. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "les dents",
+        "praise": "Les dents ! Tu as trouvé !",
+        "prompts": [
+          "Les dents. Trouve les dents.",
+          "Ce sont les dents, pour croquer et mâcher. Trouve les dents."
+        ]
+      },
+      "foils": [
+        "tongue"
+      ]
+    },
+    {
+      "id": "tongue",
+      "emoji": "👅",
+      "cat": "body",
+      "pos": "noun",
+      "en": {
+        "phrase": "a tongue",
+        "praise": "A tongue! You found it!",
+        "prompts": [
+          "A tongue. Find the tongue.",
+          "It is in your mouth and it helps you taste. Find the tongue.",
+          "It is in your mouth and it helps you taste. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "la langue",
+        "praise": "La langue ! Tu as trouvé !",
+        "prompts": [
+          "La langue. Trouve la langue.",
+          "C'est dans la bouche et ça sert à goûter. Trouve la langue."
+        ]
+      },
+      "foils": [
+        "teeth"
+      ]
+    },
+    {
+      "id": "skirt",
+      "emoji": "👚",
+      "cat": "clothes",
+      "pos": "noun",
+      "en": {
+        "phrase": "a skirt",
+        "praise": "A skirt! Well done!",
+        "prompts": [
+          "A skirt. Find the skirt.",
+          "It is a piece of clothing shaped like a bell, with no legs. Find the skirt.",
+          "It is a piece of clothing shaped like a bell, with no legs. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "une jupe",
+        "praise": "Une jupe ! Bravo !",
+        "prompts": [
+          "Une jupe. Trouve la jupe.",
+          "C'est un vêtement en forme de cloche, sans jambes. Trouve la jupe."
+        ]
+      },
+      "foils": [
+        "dress"
+      ]
+    },
+    {
+      "id": "dress",
+      "emoji": "👗",
+      "cat": "clothes",
+      "pos": "noun",
+      "en": {
+        "phrase": "a dress",
+        "praise": "A dress! Well done!",
+        "prompts": [
+          "A dress. Find the dress.",
+          "It is one piece of clothing: a top and a skirt together. Find the dress.",
+          "It is one piece of clothing: a top and a skirt together. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "une robe",
+        "praise": "Une robe ! Bravo !",
+        "prompts": [
+          "Une robe. Trouve la robe.",
+          "C'est un vêtement d'une seule pièce, avec un haut et une jupe. Trouve la robe."
+        ]
+      },
+      "foils": [
+        "skirt"
+      ]
+    },
+    {
+      "id": "scarf",
+      "emoji": "🧣",
+      "cat": "clothes",
+      "pos": "noun",
+      "en": {
+        "phrase": "a scarf",
+        "praise": "A scarf! Well done!",
+        "prompts": [
+          "A scarf. Find the scarf.",
+          "You wrap it around your neck when it is cold. Find the scarf.",
+          "You wrap it around your neck when it is cold. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "une écharpe",
+        "praise": "Une écharpe ! Bravo !",
+        "prompts": [
+          "Une écharpe. Trouve l'écharpe.",
+          "On l'enroule autour du cou quand il fait froid. Trouve l'écharpe."
+        ]
+      }
+    },
+    {
+      "id": "underwear",
+      "emoji": "🩲",
+      "cat": "clothes",
+      "pos": "noun",
+      "en": {
+        "phrase": "underwear",
+        "praise": "Underwear! Well done!",
+        "prompts": [
+          "Underwear. Find the underwear.",
+          "You wear it under your clothes. Find the underwear.",
+          "You wear it under your clothes. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "un slip",
+        "praise": "Un slip ! Bravo !",
+        "prompts": [
+          "Un slip. Trouve le slip.",
+          "On le porte sous les vêtements. Trouve le slip."
+        ]
+      }
+    },
+    {
+      "id": "watermelon",
+      "emoji": "🍉",
+      "cat": "food",
+      "pos": "noun",
+      "en": {
+        "phrase": "a watermelon",
+        "praise": "A watermelon! Well done!",
+        "prompts": [
+          "A watermelon. Find the watermelon.",
+          "It is a big green fruit, red inside, with black seeds. Find the watermelon.",
+          "It is a big green fruit, red inside, with black seeds. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "une pastèque",
+        "praise": "Une pastèque ! Bravo !",
+        "prompts": [
+          "Une pastèque. Trouve la pastèque.",
+          "C'est un gros fruit vert, rouge à l'intérieur, avec des pépins noirs. Trouve la pastèque."
+        ]
+      }
+    },
+    {
+      "id": "yogurt",
+      "emoji": "🥣",
+      "cat": "food",
+      "pos": "noun",
+      "en": {
+        "phrase": "yogurt",
+        "praise": "Yogurt! Well done!",
+        "prompts": [
+          "Yogurt. Find the yogurt.",
+          "It is white and creamy, and you eat it with a spoon. Find the yogurt.",
+          "It is white and creamy, and you eat it with a spoon. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "le yaourt",
+        "praise": "Le yaourt ! Bravo !",
+        "prompts": [
+          "Le yaourt. Trouve le yaourt.",
+          "C'est blanc et crémeux, et on le mange à la cuillère. Trouve le yaourt."
+        ]
+      }
+    },
+    {
+      "id": "cashews",
+      "emoji": "🥜",
+      "cat": "food",
+      "pos": "noun",
+      "en": {
+        "phrase": "cashew nuts",
+        "praise": "Cashew nuts! Well done!",
+        "prompts": [
+          "Cashew nuts. Find the cashew nuts.",
+          "They are small nuts shaped like a crescent. Find the cashew nuts.",
+          "They are small nuts shaped like a crescent. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "les noix de cajou",
+        "praise": "Les noix de cajou ! Bravo !",
+        "prompts": [
+          "Les noix de cajou. Trouve les noix de cajou.",
+          "Ce sont des petites noix en forme de croissant. Trouve les noix de cajou."
+        ]
+      }
+    },
+    {
+      "id": "snack",
+      "emoji": "🧁",
+      "cat": "food",
+      "pos": "noun",
+      "en": {
+        "phrase": "a snack",
+        "praise": "A snack! Well done!",
+        "prompts": [
+          "A snack. Find the snack.",
+          "It is the little meal in the afternoon, after school. Find the snack.",
+          "It is the little meal in the afternoon, after school. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "le goûter",
+        "praise": "Le goûter ! Bravo !",
+        "prompts": [
+          "Le goûter. Trouve le goûter.",
+          "C'est le petit repas de l'après-midi, après l'école. Trouve le goûter."
+        ]
+      }
+    },
+    {
+      "id": "goat",
+      "emoji": "🐐",
+      "cat": "animal",
+      "pos": "noun",
+      "en": {
+        "phrase": "a goat",
+        "praise": "A goat! Well done!",
+        "prompts": [
+          "A goat. Find the goat.",
+          "It has horns and a little beard, and it climbs. Find the goat.",
+          "It has horns and a little beard, and it climbs. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "une chèvre",
+        "praise": "Une chèvre ! Bravo !",
+        "prompts": [
+          "Une chèvre. Trouve la chèvre.",
+          "Elle a des cornes et une barbiche, et elle grimpe. Trouve la chèvre."
+        ]
+      },
+      "foils": [
+        "donkey"
+      ]
+    },
+    {
+      "id": "donkey",
+      "emoji": "🫏",
+      "cat": "animal",
+      "pos": "noun",
+      "en": {
+        "phrase": "a donkey",
+        "praise": "A donkey! Well done!",
+        "prompts": [
+          "A donkey. Find the donkey.",
+          "It looks like a small horse with long ears, and it brays. Find the donkey.",
+          "It looks like a small horse with long ears, and it brays. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "un âne",
+        "praise": "Un âne ! Bravo !",
+        "prompts": [
+          "Un âne. Trouve l'âne.",
+          "Il a de grandes oreilles et il brait. Trouve l'âne."
+        ]
+      },
+      "foils": [
+        "goat"
+      ]
+    },
+    {
+      "id": "sky",
+      "emoji": "🌤️",
+      "cat": "nature",
+      "pos": "noun",
+      "en": {
+        "phrase": "the sky",
+        "praise": "The sky! Well done!",
+        "prompts": [
+          "The sky. Find the sky.",
+          "It is above us: blue in the day, dark at night. Find the sky.",
+          "It is above us: blue in the day, dark at night. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "le ciel",
+        "praise": "Le ciel ! Bravo !",
+        "prompts": [
+          "Le ciel. Trouve le ciel.",
+          "C'est au-dessus de nous ; il est bleu le jour. Trouve le ciel."
+        ]
+      }
+    },
+    {
+      "id": "sea",
+      "emoji": "🌊",
+      "cat": "nature",
+      "pos": "noun",
+      "en": {
+        "phrase": "the sea",
+        "praise": "The sea! Well done!",
+        "prompts": [
+          "The sea. Find the sea.",
+          "It is a lot of salt water, with waves. Find the sea.",
+          "It is a lot of salt water, with waves. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "la mer",
+        "praise": "La mer ! Bravo !",
+        "prompts": [
+          "La mer. Trouve la mer.",
+          "C'est une grande étendue d'eau salée, avec des vagues. Trouve la mer."
+        ]
+      },
+      "foils": [
+        "water"
+      ]
+    },
+    {
+      "id": "belt",
+      "emoji": "🪢",
+      "cat": "clothes",
+      "pos": "noun",
+      "en": {
+        "phrase": "a belt",
+        "praise": "A belt! Well done!",
+        "prompts": [
+          "A belt. Find the belt.",
+          "You wear it around your waist to hold your trousers up. Find the belt.",
+          "You wear it around your waist to hold your trousers up. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "une ceinture",
+        "praise": "La ceinture ! Bravo !",
+        "prompts": [
+          "La ceinture. Trouve la ceinture.",
+          "On la met autour de la taille pour tenir le pantalon. Trouve la ceinture."
+        ]
+      }
+    },
+    {
+      "id": "triangle",
+      "emoji": "🔺",
+      "cat": "shape",
+      "pos": "noun",
+      "en": {
+        "phrase": "a triangle",
+        "praise": "A triangle! Well done!",
+        "prompts": [
+          "A triangle. Find the triangle.",
+          "It is a shape with three sides and three corners. Find the triangle.",
+          "It is a shape with three sides and three corners. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "un triangle",
+        "praise": "Le triangle ! Bravo !",
+        "prompts": [
+          "Le triangle. Trouve le triangle.",
+          "C'est une forme avec trois côtés et trois coins. Trouve le triangle."
+        ]
+      },
+      "foils": [
+        "rectangle"
+      ]
+    },
+    {
+      "id": "rectangle",
+      "emoji": "▭",
+      "cat": "shape",
+      "pos": "noun",
+      "en": {
+        "phrase": "a rectangle",
+        "praise": "A rectangle! Well done!",
+        "prompts": [
+          "A rectangle. Find the rectangle.",
+          "It has four sides and four corners, and two sides are longer. Find the rectangle.",
+          "It has four sides and four corners, and two sides are longer. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "un rectangle",
+        "praise": "Le rectangle ! Bravo !",
+        "prompts": [
+          "Le rectangle. Trouve le rectangle.",
+          "Il a quatre côtés et quatre coins, avec deux côtés plus longs. Trouve le rectangle."
+        ]
+      },
+      "foils": [
+        "triangle"
+      ]
+    },
+    {
+      "id": "work",
+      "emoji": "💼",
+      "cat": "school",
+      "pos": "noun",
+      "en": {
+        "phrase": "work",
+        "praise": "Work! Well done!",
+        "prompts": [
+          "Work. Find the work.",
+          "It is what grown-ups do during the day. Find the work.",
+          "It is what grown-ups do during the day. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "le travail",
+        "praise": "Le travail ! Bravo !",
+        "prompts": [
+          "Le travail. Trouve le travail.",
+          "C'est ce que font les grands pendant la journée. Trouve le travail."
+        ]
+      }
+    },
+    {
+      "id": "papers",
+      "emoji": "📄",
+      "cat": "school",
+      "pos": "noun",
+      "en": {
+        "phrase": "papers",
+        "praise": "Papers! Well done!",
+        "prompts": [
+          "Papers. Find the papers.",
+          "They are sheets with writing on them, like letters. Find the papers.",
+          "They are sheets with writing on them, like letters. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "les papiers",
+        "praise": "Les papiers ! Bravo !",
+        "prompts": [
+          "Les papiers. Trouve les papiers.",
+          "Ce sont des feuilles avec des mots dessus. Trouve les papiers."
+        ]
+      },
+      "foils": [
+        "book"
+      ]
+    },
+    {
+      "id": "share",
+      "emoji": "🤝",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "share",
+        "praise": "Share! Well done!",
+        "prompts": [
+          "Share. Find the picture of sharing.",
+          "They cut the cake and give a piece to each other. Find the picture of sharing.",
+          "They cut the cake and give a piece to each other. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "partager",
+        "praise": "Partager ! Bravo !",
+        "prompts": [
+          "Partager. Trouve l'image où on partage.",
+          "On coupe le gâteau et on donne un morceau à chacun. Trouve l'image où on partage."
+        ]
+      }
+    },
+    {
+      "id": "move",
+      "emoji": "🏃",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "move",
+        "praise": "Move! Well done!",
+        "prompts": [
+          "Move. Find the picture of moving.",
+          "The child runs and wiggles, and does not sit still. Find the picture of moving.",
+          "The child runs and wiggles, and does not sit still. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "bouger",
+        "praise": "Bouger ! Bravo !",
+        "prompts": [
+          "Bouger. Trouve l'image où on bouge.",
+          "On gigote, on court, on ne reste pas assis. Trouve l'image où on bouge."
+        ]
+      },
+      "foils": [
+        "fall"
+      ]
+    },
+    {
+      "id": "fall",
+      "emoji": "🤕",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "fall",
+        "praise": "Fall! Well done!",
+        "prompts": [
+          "Fall. Find the picture of falling.",
+          "The child trips and goes down to the floor. Find the picture of falling.",
+          "The child trips and goes down to the floor. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "tomber",
+        "praise": "Tomber ! Bravo !",
+        "prompts": [
+          "Tomber. Trouve l'image où on tombe.",
+          "On perd l'équilibre et on tombe par terre. Trouve l'image où on tombe."
+        ]
+      },
+      "foils": [
+        "move"
+      ]
+    },
+    {
+      "id": "get_dressed",
+      "emoji": "👕",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "get dressed",
+        "praise": "Get dressed! Well done!",
+        "prompts": [
+          "Get dressed. Find the picture of getting dressed.",
+          "First the shirt, then the trousers: you put on your clothes. Find the picture of getting dressed.",
+          "First the shirt, then the trousers: you put on your clothes. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "s'habiller",
+        "praise": "S'habiller ! Bravo !",
+        "prompts": [
+          "S'habiller. Trouve l'image où on s'habille.",
+          "On met son tee-shirt et son pantalon. Trouve l'image où on s'habille."
+        ]
+      }
+    },
+    {
+      "id": "prepare",
+      "emoji": "🥣",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "prepare",
+        "praise": "Prepare! Well done!",
+        "prompts": [
+          "Prepare. Find the picture of preparing.",
+          "You put flour, eggs and milk in a bowl to make a cake. Find the picture of preparing.",
+          "You put flour, eggs and milk in a bowl to make a cake. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "préparer",
+        "praise": "Préparer ! Bravo !",
+        "prompts": [
+          "Préparer. Trouve l'image où on prépare.",
+          "On mélange la farine, les œufs et le lait dans un bol. Trouve l'image où on prépare."
+        ]
+      }
+    },
+    {
+      "id": "push",
+      "emoji": "🫸",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "push",
+        "praise": "Push! Well done!",
+        "prompts": [
+          "Push. Find the picture of pushing.",
+          "You use your hand to move the box away. Find the picture of pushing.",
+          "You use your hand to move the box away. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "pousser",
+        "praise": "Pousser ! Bravo !",
+        "prompts": [
+          "Pousser. Trouve l'image où on pousse.",
+          "On pousse le carton avec la main. Trouve l'image où on pousse."
+        ]
+      }
+    },
+    {
+      "id": "catch",
+      "emoji": "🤲",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "catch",
+        "praise": "Catch! Well done!",
+        "prompts": [
+          "Catch. Find the picture of catching.",
+          "The ball is in the air and your hands are ready. Find the picture of catching.",
+          "The ball is in the air and your hands are ready. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "attraper",
+        "praise": "Attraper ! Bravo !",
+        "prompts": [
+          "Attraper. Trouve l'image où on attrape.",
+          "La balle arrive et on la prend avec les mains. Trouve l'image où on attrape."
+        ]
+      }
+    },
+    {
+      "id": "blow",
+      "emoji": "🌬️",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "blow",
+        "praise": "Blow! Well done!",
+        "prompts": [
+          "Blow. Find the picture of blowing.",
+          "You send air out of your mouth to move the flame. Find the picture of blowing.",
+          "You send air out of your mouth to move the flame. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "souffler",
+        "praise": "Souffler ! Bravo !",
+        "prompts": [
+          "Souffler. Trouve l'image où on souffle.",
+          "On envoie de l'air avec la bouche pour bouger la flamme. Trouve l'image où on souffle."
+        ]
+      }
+    },
+    {
+      "id": "take_off",
+      "emoji": "🧥",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "take off",
+        "praise": "Take off! Well done!",
+        "prompts": [
+          "Take off. Find the picture of taking off.",
+          "The hat goes up, off your head. Find the picture of taking off.",
+          "The hat goes up, off your head. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "enlever",
+        "praise": "Enlever ! Bravo !",
+        "prompts": [
+          "Enlever. Trouve l'image où on enlève.",
+          "On enlève son chapeau : il monte. Trouve l'image où on enlève."
+        ]
+      },
+      "foils": [
+        "put_on"
+      ]
+    },
+    {
+      "id": "put_on",
+      "emoji": "🧢",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "put on",
+        "praise": "Put on! Well done!",
+        "prompts": [
+          "Put on. Find the picture of putting on.",
+          "The hat goes down, onto your head. Find the picture of putting on.",
+          "The hat goes down, onto your head. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "mettre",
+        "praise": "Mettre ! Bravo !",
+        "prompts": [
+          "Mettre. Trouve l'image où on met.",
+          "On met son chapeau : il descend. Trouve l'image où on met."
+        ]
+      },
+      "foils": [
+        "take_off"
+      ]
+    },
+    {
+      "id": "smile",
+      "emoji": "😊",
+      "cat": "action",
+      "pos": "verb",
+      "en": {
+        "phrase": "smile",
+        "praise": "Smile! Well done!",
+        "prompts": [
+          "Smile. Find the smiling face.",
+          "The mouth turns up and the eyes are happy. Find the smiling face.",
+          "The mouth turns up and the eyes are happy. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "sourire",
+        "praise": "Sourire ! Bravo !",
+        "prompts": [
+          "Sourire. Trouve l'image où on sourit.",
+          "La bouche remonte et les yeux sont contents. Trouve l'image où on sourit."
+        ]
+      }
+    },
+    {
+      "id": "dirty",
+      "emoji": "🧦",
+      "cat": "describe",
+      "pos": "adj",
+      "en": {
+        "phrase": "dirty",
+        "praise": "Dirty! You found it!",
+        "prompts": [
+          "Dirty. Find the dirty shirt.",
+          "There are spots on it; it is not clean. Find the dirty shirt.",
+          "There are spots on it; it is not clean. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "sale",
+        "praise": "Sale ! Tu as trouvé !",
+        "prompts": [
+          "Sale. La chemise est sale. Trouve la chemise sale.",
+          "Il y a des taches dessus ; ce n'est pas propre. Trouve la chemise sale."
+        ]
+      },
+      "foils": [
+        "clean"
+      ]
+    },
+    {
+      "id": "clean",
+      "emoji": "✨",
+      "cat": "describe",
+      "pos": "adj",
+      "en": {
+        "phrase": "clean",
+        "praise": "Clean! You found it!",
+        "prompts": [
+          "Clean. Find the clean shirt.",
+          "There are no spots; it is fresh and clean. Find the clean shirt.",
+          "There are no spots; it is fresh and clean. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "propre",
+        "praise": "Propre ! Tu as trouvé !",
+        "prompts": [
+          "Propre. La chemise est propre. Trouve la chemise propre.",
+          "Il n'y a pas de taches ; elle est fraîche et propre. Trouve la chemise propre."
+        ]
+      },
+      "foils": [
+        "dirty"
+      ]
+    },
+    {
+      "id": "funny",
+      "emoji": "🤪",
+      "cat": "describe",
+      "pos": "adj",
+      "en": {
+        "phrase": "funny",
+        "praise": "Funny! You found it!",
+        "prompts": [
+          "Funny. Find the funny face.",
+          "It makes you laugh. Find the funny face.",
+          "It makes you laugh. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "drôle",
+        "praise": "Drôle ! Tu as trouvé !",
+        "prompts": [
+          "Drôle. Trouve le visage drôle.",
+          "Ça fait rire. Trouve le visage drôle."
+        ]
+      }
+    },
+    {
+      "id": "bad",
+      "emoji": "👎",
+      "cat": "describe",
+      "pos": "adj",
+      "en": {
+        "phrase": "bad",
+        "praise": "Bad! You found it!",
+        "prompts": [
+          "Bad. Find the thumbs-down.",
+          "It is not good at all. Find the thumbs-down.",
+          "It is not good at all. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "mauvais",
+        "praise": "Mauvais ! Tu as trouvé !",
+        "prompts": [
+          "Mauvais. Trouve l'image de mauvais.",
+          "C'est le contraire de bon ; ça ne fait pas plaisir. Trouve l'image de mauvais."
+        ]
+      }
+    },
+    {
+      "id": "hard",
+      "emoji": "🪨",
+      "cat": "describe",
+      "pos": "adj",
+      "en": {
+        "phrase": "hard",
+        "praise": "Hard! You found it!",
+        "prompts": [
+          "Hard. Find the hard rock.",
+          "You cannot squeeze it; it is like a stone. Find the hard rock.",
+          "You cannot squeeze it; it is like a stone. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "dur",
+        "praise": "Dur ! Tu as trouvé !",
+        "prompts": [
+          "Dur. Trouve le caillou dur.",
+          "On ne peut pas le presser ; c'est comme un caillou. Trouve le caillou dur."
+        ]
+      }
+    },
+    {
+      "id": "on",
+      "emoji": "⬆️",
+      "cat": "position",
+      "pos": "position",
+      "en": {
+        "phrase": "on",
+        "praise": "On! Well done!",
+        "prompts": [
+          "On. The ball is on the box.",
+          "The ball sits on top of the box. Find on.",
+          "The ball sits on top of the box. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "sur",
+        "praise": "Sur ! Bravo !",
+        "prompts": [
+          "Sur. Le ballon est sur la boîte.",
+          "Le ballon est posé sur la boîte. Trouve sur."
+        ]
+      },
+      "foils": [
+        "inside",
+        "under"
+      ]
+    },
+    {
+      "id": "inside",
+      "emoji": "📥",
+      "cat": "position",
+      "pos": "position",
+      "en": {
+        "phrase": "in",
+        "praise": "In! Well done!",
+        "prompts": [
+          "In. The ball is in the box.",
+          "The ball is inside the box. Find in.",
+          "The ball is inside the box. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "dans",
+        "praise": "Dans ! Bravo !",
+        "prompts": [
+          "Dans. Le ballon est dans la boîte.",
+          "Le ballon est à l'intérieur de la boîte. Trouve dans."
+        ]
+      },
+      "foils": [
+        "on",
+        "under"
+      ]
+    },
+    {
+      "id": "under",
+      "emoji": "⬇️",
+      "cat": "position",
+      "pos": "position",
+      "en": {
+        "phrase": "under",
+        "praise": "Under! Well done!",
+        "prompts": [
+          "Under. The ball is under the box.",
+          "The ball is below the box, not on it. Find under.",
+          "The ball is below the box, not on it. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "sous",
+        "praise": "Sous ! Bravo !",
+        "prompts": [
+          "Sous. Le ballon est sous la boîte.",
+          "Le ballon est sous la boîte, pas sur la boîte. Trouve sous."
+        ]
+      },
+      "foils": [
+        "on",
+        "inside"
+      ]
+    },
+    {
+      "id": "in_front",
+      "emoji": "🙂",
+      "cat": "position",
+      "pos": "position",
+      "en": {
+        "phrase": "in front of",
+        "praise": "In front of! Well done!",
+        "prompts": [
+          "In front of. The ball is in front of the box.",
+          "The ball is between you and the box. Find in front of.",
+          "The ball is between you and the box. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "devant",
+        "praise": "Devant ! Bravo !",
+        "prompts": [
+          "Devant. Le ballon est devant la boîte.",
+          "Le ballon est entre toi et la boîte. Trouve devant."
+        ]
+      },
+      "foils": [
+        "behind",
+        "next_to"
+      ]
+    },
+    {
+      "id": "behind",
+      "emoji": "🫣",
+      "cat": "position",
+      "pos": "position",
+      "en": {
+        "phrase": "behind",
+        "praise": "Behind! Well done!",
+        "prompts": [
+          "Behind. The ball is behind the box.",
+          "The box hides the ball. Find behind.",
+          "The box hides the ball. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "derrière",
+        "praise": "Derrière ! Bravo !",
+        "prompts": [
+          "Derrière. Le ballon est derrière la boîte.",
+          "La boîte cache le ballon. Trouve derrière."
+        ]
+      },
+      "foils": [
+        "in_front",
+        "next_to"
+      ]
+    },
+    {
+      "id": "next_to",
+      "emoji": "↔️",
+      "cat": "position",
+      "pos": "position",
+      "en": {
+        "phrase": "next to",
+        "praise": "Next to! Well done!",
+        "prompts": [
+          "Next to. The ball is next to the box.",
+          "The ball is beside the box, on the same floor. Find next to.",
+          "The ball is beside the box, on the same floor. Which one is it?"
+        ]
+      },
+      "fr": {
+        "phrase": "à côté de",
+        "praise": "À côté de ! Bravo !",
+        "prompts": [
+          "À côté de. Le ballon est à côté de la boîte.",
+          "Le ballon est juste à côté de la boîte, sur le sol. Trouve à côté de."
+        ]
+      },
+      "foils": [
+        "in_front",
+        "behind"
+      ]
     }
   ],
   "actions": [
@@ -2078,6 +3261,69 @@
       "emoji": "💃",
       "en": "Dance with me!",
       "fr": "Danse avec moi !"
+    }
+  ],
+  "packs": [
+    {
+      "id": "2026-10",
+      "label": "10 月抽查",
+      "note": "学校 10 月词表里随机抽的 37 个词",
+      "lang": "fr",
+      "level": 1,
+      "words": [
+        "share",
+        "teeth",
+        "tongue",
+        "move",
+        "fall",
+        "dirty",
+        "clean",
+        "skirt",
+        "dress",
+        "scarf",
+        "underwear",
+        "get_dressed",
+        "watermelon",
+        "yogurt",
+        "cashews",
+        "snack",
+        "prepare",
+        "push",
+        "catch",
+        "goat",
+        "monkey",
+        "donkey",
+        "blow",
+        "take_off",
+        "put_on",
+        "smile",
+        "funny",
+        "sky",
+        "bad",
+        "sea",
+        "belt",
+        "triangle",
+        "rectangle",
+        "work",
+        "hard",
+        "papers",
+        "under"
+      ]
+    },
+    {
+      "id": "positions",
+      "label": "位置词基础",
+      "note": "sur / dans / sous / devant / derrière / à côté de",
+      "lang": "fr",
+      "level": 1,
+      "words": [
+        "on",
+        "inside",
+        "under",
+        "in_front",
+        "behind",
+        "next_to"
+      ]
     }
   ]
 }
@@ -2141,10 +3387,15 @@
   <div class="end-wrap">
     <div class="end-momo" data-momo></div>
     <h2 id="end-title">全部完成！</h2>
-    <div class="star-line"><span id="end-stars">8</span><small>/ <span id="end-total">8</span> 颗星</small></div>
-    <p>Momo 把星星都收进小篮子里啦</p>
+    <div class="star-line"><span id="end-stars">8</span><small id="end-unit">/ <span id="end-total">8</span> 颗星</small></div>
+    <p id="end-sub">Momo 把星星都收进小篮子里啦</p>
     <div class="end-basket" id="end-basket" aria-label="今天玩过的词"></div>
-    <button class="start" id="btn-again"><span class="play">▶</span><span>再玩一次</span></button>
+    <div class="end-report" id="end-report" hidden>
+      <div class="report-head"><span id="report-score">答对 0 / 0</span><span id="report-pct">—</span></div>
+      <div class="report-meta" id="report-meta"></div>
+      <div class="report-missed" id="report-missed"></div>
+    </div>
+    <button class="start" id="btn-again"><span class="play">▶</span><span id="btn-again-label">再玩一次</span></button>
     <button class="ghost" id="btn-home">回到首页</button>
   </div>
 </section>
@@ -2184,6 +3435,17 @@
       </div>
     </div>
     <div class="set-block">
+      <label>本轮词类</label>
+      <div class="seg" id="settings-pos">
+        <button data-pos="all">全部</button>
+        <button data-pos="noun">名词</button>
+        <button data-pos="verb">动词</button>
+        <button data-pos="adj">形容词</button>
+        <button data-pos="position">位置词</button>
+      </div>
+      <p class="note">只影响「开始玩」抽哪些词；到期复习仍跨词类安排。位置词只有 6 个，选它时本轮会自动变成 6 次。</p>
+    </div>
+    <div class="set-block">
       <label>每轮次数</label>
       <div class="seg" id="settings-length">
         <button data-len="6">6 次</button>
@@ -2220,8 +3482,28 @@
       <p class="note">只改变播放速度，不改变句子难度；适合她听熟后加速。</p>
     </div>
     <div class="set-block">
+      <label>复习与月度检查</label>
+      <div class="review-box">
+        <div class="review-row">
+          <div class="review-copy"><b>到期复习</b><small id="due-count">…</small></div>
+          <button class="btn-soft" id="btn-review">开始复习</button>
+        </div>
+        <div class="review-row">
+          <div class="review-copy"><b>月度检查</b><small>从下面这份词单里抽全部词，看孩子能不能认出来</small></div>
+          <button class="btn-soft" id="btn-check">开始检查</button>
+        </div>
+        <select class="pack-select" id="check-pack" aria-label="选择月度词单"></select>
+        <div class="check-last" id="check-last"></div>
+        <details class="pack-preview">
+          <summary>查看这份词单</summary>
+          <div class="pack-words" id="pack-words"></div>
+        </details>
+      </div>
+      <p class="note">检查每个词只出一次、不提示答案；答错的词会在结果里列出来。检查会顺带更新复习进度，但不会改变你选的词类。</p>
+    </div>
+    <div class="set-block">
       <label>离线使用</label>
-      <button class="btn-soft" id="btn-offline">下载离线音频（约 8 MB）</button>
+      <button class="btn-soft" id="btn-offline">下载离线音频（约 14 MB）</button>
       <p class="note" id="offline-status">下载后，安装成 App 也能离线玩。</p>
     </div>
     <div class="set-block">
@@ -2233,7 +3515,15 @@
         <span class="sum-label">学习进度</span>
         <span class="sum-right"><span id="settings-summary"></span><span class="chev">▾</span></span>
       </summary>
-      <div class="pgrid" id="settings-grid"></div>
+      <p class="bank-summary" id="bank-summary"></p>
+      <div class="bank-filter" id="bank-filter">
+        <button data-pos="all" class="sel">全部</button>
+        <button data-pos="noun">名词</button>
+        <button data-pos="verb">动词</button>
+        <button data-pos="adj">形容词</button>
+        <button data-pos="position">位置词</button>
+      </div>
+      <div id="settings-grid"></div>
       <p class="note">每词 5 个圆点代表熟练度；蓝色是英语，粉色是法语。间隔重复会自动安排复习。</p>
     </details>
     <div class="set-block">
@@ -2245,6 +3535,17 @@
     </div>
     <button class="btn-danger" id="btn-reset">清空学习记录</button>
     <p class="note">进度只保存在本机浏览器，不会上传。清空后无法恢复。</p>
+  </div>
+</div>
+
+<div class="overlay" id="check-intro">
+  <div class="sheet check-sheet">
+    <div class="pause-icon">📋</div>
+    <h3>本月单词检查</h3>
+    <p id="check-intro-text">…</p>
+    <p class="check-note">每个词只选一次、不提示答案；听不清可以点「再听一次」。答错会短暂显示正确答案，然后进入下一个词。中途可以暂停。</p>
+    <button class="start" id="btn-check-start"><span class="play">▶</span><span id="btn-check-start-label">开始检查</span></button>
+    <button class="btn-soft" id="btn-check-cancel">先不检查</button>
   </div>
 </div>
 
@@ -2267,15 +3568,25 @@
   var DATA = JSON.parse(document.getElementById('word-data').textContent);
   var WORDS = DATA.words;
   var ACTIONS = DATA.actions;
+  var PACKS = DATA.packs || [];
   var BY_ID = {};
   WORDS.forEach(function (w) { BY_ID[w.id] = w; });
 
   var LANGS = ['en', 'fr'];
+  var POS = {
+    noun: { label: '名词', hint: '人、东西、地方' },
+    verb: { label: '动词', hint: '动作' },
+    adj: { label: '形容词', hint: '样子、感觉' },
+    position: { label: '位置词', hint: '在哪里' }
+  };
+  var POS_ORDER = ['noun', 'verb', 'adj', 'position'];
+  var PACK_BY_ID = {};
+  PACKS.forEach(function (p) { PACK_BY_ID[p.id] = p; });
   var INTERVALS = [1, 2, 4, 8, 16];
   var KEY = 'momo-word-basket.v1';
   // Keep this in sync with VERSION in sw.js. The offline-audio button writes
   // into the same cache the service worker reads from.
-  var PWA_CACHE = 'momo-static-v1';
+  var PWA_CACHE = 'momo-static-v2';
   var COLORS = ['#FF8A6B', '#FFCE6B', '#8FD3B6', '#86C5EA', '#E97A9A', '#B79CED', '#F4A261'];
 
   var CONFUSE = {
@@ -2295,7 +3606,19 @@
     ['strawberry', 'grapes'], ['cake', 'cookie'],
     ['cloud', 'rain'], ['cloud', 'snowflake'], ['rain', 'water'], ['ice', 'water'],
     ['star', 'snowflake'], ['tree', 'mountain'], ['tree', 'giraffe'], ['house', 'castle'],
-    ['hand', 'nose'], ['hand', 'eyes'], ['nose', 'eyes']
+    ['hand', 'nose'], ['hand', 'eyes'], ['nose', 'eyes'],
+    ['skirt', 'dress'], ['triangle', 'rectangle'], ['teeth', 'tongue'],
+    ['dirty', 'clean'], ['sky', 'cloud'], ['sky', 'sun'], ['sea', 'water'],
+    ['snack', 'cookie'], ['snack', 'cake'], ['yogurt', 'milk'], ['papers', 'book'],
+    ['goat', 'donkey'], ['put_on', 'take_off'], ['move', 'fall'], ['belt', 'scarf'],
+    ['underwear', 'skirt'], ['underwear', 'dress'], ['underwear', 'scarf'],
+    ['snack', 'apple'], ['snack', 'orange'], ['snack', 'grapes'], ['snack', 'watermelon'],
+    ['snack', 'cookie'], ['snack', 'cake'], ['snack', 'yogurt'], ['snack', 'milk'], ['snack', 'cashews'],
+    ['share', 'cookie'], ['share', 'snack'], ['prepare', 'egg'], ['prepare', 'cake'],
+    ['catch', 'ball'], ['yogurt', 'spoon'],
+    ['get_dressed', 'dirty'], ['get_dressed', 'clean'], ['get_dressed', 'skirt'],
+    ['get_dressed', 'dress'], ['get_dressed', 'underwear'], ['get_dressed', 'put_on'],
+    ['get_dressed', 'take_off'], ['work', 'papers']
   ].forEach(function (pair) {
     CONFUSE[pair[0]] = CONFUSE[pair[0]] || [];
     CONFUSE[pair[1]] = CONFUSE[pair[1]] || [];
@@ -2306,6 +3629,8 @@
   var INTRO = { en: "Let's play!", fr: 'On joue !' };
   var RETRY = { en: 'Hmm... try again.', fr: 'Hmm... essaie encore.' };
   var END = { en: 'You did it! Bravo!', fr: "C'est fini ! Bravo !" };
+  var CHECK = { en: "Let's check your words! Listen carefully.", fr: 'On vérifie les mots ! Écoute bien.' };
+  var CHECK_END = { en: "Good job! Let's look at the words together.", fr: 'Bravo ! Regardons les mots ensemble.' };
 
   var MOMO = '' +
     '<svg class="momo" viewBox="0 0 220 210" aria-hidden="true">' +
@@ -2324,6 +3649,329 @@
     '</svg>';
 
   document.querySelectorAll('[data-momo]').forEach(function (el) { el.innerHTML = MOMO; });
+
+  /* Hand-drawn SVG art for words emoji cannot tell apart (clothes, verbs,
+     adjectives and spatial relations). Keyed by word id; words without an
+     entry fall back to their emoji. */
+  var ART = {
+    skirt:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="86" rx="28" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<path d="M35 30 H65 L80 78 Q50 87 20 78 Z" fill="#E97A9A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M35 30 H65 L67 41 H33 Z" fill="#C95E7C" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M40 48 L36 72 M50 48 V76 M60 48 L64 72" stroke="#FFF3DF" stroke-width="2.6" stroke-linecap="round" opacity=".65"/>' +
+        '<circle cx="50" cy="36" r="2.2" fill="#FFCE6B"/>' +
+      '</svg>',
+
+    dress:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="86" rx="28" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<path d="M38 24 L44 30 H56 L62 24 L71 33 L66 44 L74 78 Q50 89 26 78 L34 44 L29 33 Z" fill="#B79CED" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M38 24 Q50 35 62 24" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M40 45 H60" stroke="#FFF3DF" stroke-width="2.5" opacity=".55" stroke-linecap="round"/>' +
+        '<circle cx="50" cy="53" r="2.2" fill="#FFCE6B"/>' +
+        '<circle cx="50" cy="61" r="2.2" fill="#FFCE6B"/>' +
+        '<path d="M42 68 L38 78 M58 68 L62 78" stroke="#FFF3DF" stroke-width="2.6" stroke-linecap="round" opacity=".55"/>' +
+      '</svg>',
+
+    belt:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M10 41 Q50 32 90 41 L88 59 Q50 50 12 59 Z" fill="#8B5E3C" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<rect x="39" y="33" width="22" height="32" rx="5" fill="#FFCE6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<rect x="45" y="40" width="10" height="18" rx="2.5" fill="#FFF3DF" stroke="#5B4636" stroke-width="2"/>' +
+        '<circle cx="23" cy="47" r="2.4" fill="#FFF3DF"/><circle cx="31" cy="47" r="2.4" fill="#FFF3DF"/>' +
+        '<circle cx="70" cy="49" r="2.4" fill="#5B4636" opacity=".55"/><circle cx="78" cy="49" r="2.4" fill="#5B4636" opacity=".55"/>' +
+      '</svg>',
+
+    rectangle:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<rect x="12" y="28" width="76" height="44" rx="9" fill="#86C5EA" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M22 38 H78" stroke="#FFF3DF" stroke-width="3" stroke-linecap="round" opacity=".55"/>' +
+        '<circle cx="18" cy="34" r="2.4" fill="#5B4636"/><circle cx="82" cy="34" r="2.4" fill="#5B4636"/>' +
+        '<circle cx="18" cy="66" r="2.4" fill="#5B4636"/><circle cx="82" cy="66" r="2.4" fill="#5B4636"/>' +
+      '</svg>',
+
+    triangle:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M50 16 L88 80 H12 Z" fill="#FF8A6B" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M50 28 L76 72 H24 Z" fill="none" stroke="#FFF3DF" stroke-width="2.4" opacity=".5"/>' +
+        '<circle cx="50" cy="16" r="2.4" fill="#5B4636"/><circle cx="88" cy="80" r="2.4" fill="#5B4636"/><circle cx="12" cy="80" r="2.4" fill="#5B4636"/>' +
+      '</svg>',
+
+    dirty:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M35 24 L43 28 Q50 35 57 28 L65 24 L80 34 L72 47 L66 43 L68 82 Q50 88 32 82 L34 43 L28 47 L20 34 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M43 29 Q50 36 57 29" fill="none" stroke="#5B4636" stroke-width="2.4" opacity=".5"/>' +
+        '<ellipse cx="42" cy="55" rx="8" ry="6" fill="#8C5A32"/>' +
+        '<ellipse cx="58" cy="67" rx="6" ry="4.5" fill="#8C5A32"/>' +
+        '<ellipse cx="52" cy="45" rx="4" ry="3.2" fill="#6D8C45"/>' +
+        '<path d="M37 76 q5 4 10 0" fill="none" stroke="#B98A5E" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M74 22 q4 -5 8 0" fill="none" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>' +
+      '</svg>',
+
+    clean:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M35 24 L43 28 Q50 35 57 28 L65 24 L80 34 L72 47 L66 43 L68 82 Q50 88 32 82 L34 43 L28 47 L20 34 Z" fill="#F4FBFF" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M43 29 Q50 36 57 29" fill="none" stroke="#5B4636" stroke-width="2.4" opacity=".5"/>' +
+        '<path d="M22 22 l2.5 7 7 2.5 -7 2.5 -2.5 7 -2.5 -7 -7 -2.5 7 -2.5 Z" fill="#FFCE6B"/>' +
+        '<path d="M78 62 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFCE6B"/>' +
+        '<path d="M62 20 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6 Z" fill="#86C5EA"/>' +
+        '<path d="M72 38 q6 0 6 6 q0 6 -6 6 q-6 0 -6 -6 q0 -6 6 -6" fill="#EAF7FF" stroke="#5B4636" stroke-width="2" opacity=".8"/>' +
+      '</svg>',
+
+    sky:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<rect x="8" y="10" width="84" height="78" rx="20" fill="#BFE3FA" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M8 66 Q50 54 92 66 V68 Q92 88 70 88 H30 Q8 88 8 68 Z" fill="#DDF1FE"/>' +
+        '<circle cx="68" cy="32" r="11" fill="#FFCE6B"/>' +
+        '<path d="M58 28 a6 6 0 0 0 0 12" fill="none" stroke="#FFE9A8" stroke-width="2.4" stroke-linecap="round"/>' +
+        '<path d="M30 42 q0 -8 8 -8 q3 -6 9 -3 q6 -2 8 5 q7 1 6 8 H30 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="2.4"/>' +
+        '<path d="M28 58 q5 -5 10 0 M62 62 q5 -5 10 0" fill="none" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>' +
+      '</svg>',
+
+    yogurt:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="88" rx="24" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<path d="M74 20 L83 29 L62 50" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
+        '<ellipse cx="60" cy="51" rx="4.5" ry="6" fill="#EFC182" stroke="#5B4636" stroke-width="2.2" transform="rotate(38 60 51)"/>' +
+        '<path d="M32 32 H68 L64 82 Q50 88 36 82 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<rect x="27" y="24" width="46" height="10" rx="5" fill="#E97A9A" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M38 48 H62" stroke="#86C5EA" stroke-width="7" stroke-linecap="round"/>' +
+        '<circle cx="50" cy="64" r="4.5" fill="#E97A9A"/>' +
+        '<path d="M38 74 H62" stroke="#E97A9A" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>' +
+      '</svg>',
+
+    cashews:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<g transform="translate(38 36) rotate(-12)">' +
+          '<path d="M0 -14 C-12 -4 -8 12 6 15 C20 18 28 6 23 -6 C19 -15 8 -19 0 -14 Z" fill="#F0C98F" stroke="#5B4636" stroke-width="3"/>' +
+          '<path d="M2 -6 C-4 0 -2 8 6 10" fill="none" stroke="#C99A5B" stroke-width="2.2" stroke-linecap="round"/>' +
+        '</g>' +
+        '<g transform="translate(62 58) rotate(18)">' +
+          '<path d="M0 -13 C-11 -4 -7 11 6 14 C19 17 26 5 21 -6 C17 -14 7 -18 0 -13 Z" fill="#F6D7A6" stroke="#5B4636" stroke-width="3"/>' +
+          '<path d="M2 -5 C-3 0 -1 8 6 9" fill="none" stroke="#C99A5B" stroke-width="2.2" stroke-linecap="round"/>' +
+        '</g>' +
+        '<g transform="translate(28 66) rotate(32)">' +
+          '<path d="M0 -11 C-9 -3 -6 10 5 12 C16 14 22 4 18 -5 C15 -12 6 -15 0 -11 Z" fill="#E8B36A" stroke="#5B4636" stroke-width="2.6"/>' +
+        '</g>' +
+      '</svg>',
+
+    snack:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="78" rx="36" ry="9" fill="#FFFDF8" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="36" cy="62" r="13" fill="#E8B36A" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="31" cy="58" r="2" fill="#7A4B2A"/><circle cx="40" cy="60" r="2" fill="#7A4B2A"/><circle cx="34" cy="67" r="2" fill="#7A4B2A"/>' +
+        '<circle cx="61" cy="64" r="10" fill="#E97A9A" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M61 54 q1 -6 7 -7" fill="none" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round"/>' +
+        '<path d="M68 47 q5 -1 6 4 q-5 2 -6 -4" fill="#8FD3B6" stroke="#5B4636" stroke-width="2"/>' +
+        '<rect x="75" y="40" width="13" height="22" rx="3" fill="#FFCE6B" stroke="#5B4636" stroke-width="2.6"/>' +
+        '<path d="M81 40 V26" stroke="#E97A9A" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<path d="M24 80 H76" stroke="#D8C2A8" stroke-width="2.4" stroke-linecap="round"/>' +
+      '</svg>',
+
+    papers:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<g transform="rotate(-10 50 50)"><rect x="26" y="18" width="44" height="60" rx="5" fill="#F4E7D2" stroke="#5B4636" stroke-width="3"/></g>' +
+        '<g transform="rotate(6 50 50)"><rect x="30" y="16" width="44" height="60" rx="5" fill="#FFFDF8" stroke="#5B4636" stroke-width="3"/></g>' +
+        '<rect x="32" y="14" width="44" height="60" rx="5" fill="#FFFDF8" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M40 28 H68 M40 37 H68 M40 46 H62 M40 55 H66" stroke="#86C5EA" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M38 20 q-6 3 -4 9 q2 5 7 2" fill="none" stroke="#E97A9A" stroke-width="2.6" stroke-linecap="round"/>' +
+      '</svg>',
+
+    share:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M36 14 C24 16 16 26 16 36 C16 47 25 56 36 56 L40 48 L35 40 L40 32 L35 24 Z" fill="#E8B36A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M64 14 C76 16 84 26 84 36 C84 47 75 56 64 56 L60 48 L65 40 L60 32 L65 24 Z" fill="#E8B36A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<circle cx="28" cy="30" r="2.2" fill="#7A4B2A"/><circle cx="32" cy="43" r="2.2" fill="#7A4B2A"/>' +
+        '<circle cx="72" cy="30" r="2.2" fill="#7A4B2A"/><circle cx="68" cy="43" r="2.2" fill="#7A4B2A"/>' +
+        '<path d="M10 92 Q12 74 24 68" fill="none" stroke="#F4C99B" stroke-width="10" stroke-linecap="round"/>' +
+        '<path d="M90 92 Q88 74 76 68" fill="none" stroke="#F4C99B" stroke-width="10" stroke-linecap="round"/>' +
+        '<circle cx="26" cy="66" r="7" fill="#F4C99B" stroke="#5B4636" stroke-width="2.6"/>' +
+        '<circle cx="74" cy="66" r="7" fill="#F4C99B" stroke="#5B4636" stroke-width="2.6"/>' +
+        '<circle cx="50" cy="50" r="2.2" fill="#E8B36A"/><circle cx="46" cy="60" r="1.6" fill="#E8B36A"/><circle cx="55" cy="58" r="1.8" fill="#E8B36A"/>' +
+        '<path d="M50 64 q-3 -5 0 -8 q3 3 0 8" fill="#E97A9A"/>' +
+      '</svg>',
+
+    fall:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M10 86 H90" stroke="#D8C2A8" stroke-width="4" stroke-linecap="round"/>' +
+        '<circle cx="70" cy="66" r="11" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M62 60 L44 48" stroke="#86C5EA" stroke-width="12" stroke-linecap="round"/>' +
+        '<path d="M50 52 L36 38 L28 30" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
+        '<path d="M46 49 L34 58" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
+        '<path d="M46 48 L40 28" fill="none" stroke="#E97A9A" stroke-width="8" stroke-linecap="round"/>' +
+        '<path d="M44 47 L54 24" fill="none" stroke="#E97A9A" stroke-width="8" stroke-linecap="round"/>' +
+        '<path d="M22 62 H38 M16 72 H32" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round" opacity=".45"/>' +
+        '<path d="M84 30 l2.4 6.6 6.6 2.4 -6.6 2.4 -2.4 6.6 -2.4 -6.6 -6.6 -2.4 6.6 -2.4 Z" fill="#FFCE6B"/>' +
+        '<path d="M56 18 l1.8 5 5 1.8 -5 1.8 -1.8 5 -1.8 -5 -5 -1.8 5 -1.8 Z" fill="#FFCE6B"/>' +
+      '</svg>',
+
+    get_dressed:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="88" rx="24" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<circle cx="50" cy="26" r="11" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M37 42 Q50 34 63 42 L65 62 H35 Z" fill="#86C5EA" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M38 62 H62 L60 82 H52 L50 70 L48 82 H40 Z" fill="#E97A9A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M34 46 L22 58 M66 46 L78 58" fill="none" stroke="#F4C99B" stroke-width="7" stroke-linecap="round"/>' +
+        '<path d="M44 84 H40 M56 84 H60" stroke="#5B4636" stroke-width="5" stroke-linecap="round"/>' +
+        '<circle cx="46" cy="25" r="1.6" fill="#4A3226"/><circle cx="54" cy="25" r="1.6" fill="#4A3226"/>' +
+        '<path d="M46 30 q4 3 8 0" fill="none" stroke="#4A3226" stroke-width="2" stroke-linecap="round"/>' +
+      '</svg>',
+
+    prepare:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="88" rx="28" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<path d="M20 52 H80 Q75 85 50 87 Q25 85 20 52 Z" fill="#86C5EA" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M24 54 H76 Q72 64 50 65 Q28 64 24 54 Z" fill="#FFCE6B" stroke="#5B4636" stroke-width="2.4"/>' +
+        '<path d="M58 53 L72 24" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M72 24 q-7 -4 -10 4 q-3 8 5 9 q8 1 9 -6" fill="none" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<ellipse cx="27" cy="36" rx="8" ry="11" fill="#FFFDF8" stroke="#5B4636" stroke-width="2.6" transform="rotate(-16 27 36)"/>' +
+        '<circle cx="28" cy="38" r="4" fill="#FFCE6B"/>' +
+      '</svg>',
+
+    push:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M8 86 H92" stroke="#D8C2A8" stroke-width="3" stroke-linecap="round"/>' +
+        '<rect x="48" y="34" width="40" height="48" rx="5" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M48 46 H88 M48 58 H88" stroke="#5B4636" stroke-width="2" opacity=".3"/>' +
+        '<path d="M8 64 Q22 58 36 61 L45 63" fill="none" stroke="#F4C99B" stroke-width="12" stroke-linecap="round"/>' +
+        '<circle cx="46" cy="63" r="7" fill="#F4C99B" stroke="#5B4636" stroke-width="2.6"/>' +
+        '<path d="M6 48 H18 M2 58 H14 M8 78 H20" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round" opacity=".4"/>' +
+      '</svg>',
+
+    catch:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<circle cx="50" cy="16" r="9" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="46" cy="12" r="2.2" fill="#FFF3DF"/>' +
+        '<circle cx="50" cy="58" r="11" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="46" cy="56" r="1.7" fill="#4A3226"/><circle cx="54" cy="56" r="1.7" fill="#4A3226"/>' +
+        '<path d="M46 62 q4 3 8 0" fill="none" stroke="#4A3226" stroke-width="2" stroke-linecap="round"/>' +
+        '<path d="M50 69 V82" stroke="#86C5EA" stroke-width="12" stroke-linecap="round"/>' +
+        '<path d="M44 66 L34 40 M56 66 L66 40" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
+        '<circle cx="34" cy="38" r="5.5" fill="#F4C99B" stroke="#5B4636" stroke-width="2.4"/>' +
+        '<circle cx="66" cy="38" r="5.5" fill="#F4C99B" stroke="#5B4636" stroke-width="2.4"/>' +
+        '<path d="M46 82 L40 90 M54 82 L60 90" stroke="#E97A9A" stroke-width="7" stroke-linecap="round"/>' +
+        '<path d="M24 22 l-5 -5 M76 22 l5 -5 M50 2 v-5" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round" opacity=".4"/>' +
+      '</svg>',
+
+    blow:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<circle cx="34" cy="48" r="20" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M22 36 q6 -7 14 -5" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M30 44 q4 3 8 0" fill="none" stroke="#4A3226" stroke-width="2.4" stroke-linecap="round"/>' +
+        '<path d="M52 44 q6 -2 8 4 q-4 4 -8 2 Z" fill="#E97A9A" stroke="#5B4636" stroke-width="2.2"/>' +
+        '<path d="M60 46 q8 -6 16 -2 M62 52 q8 -2 14 2" fill="none" stroke="#86C5EA" stroke-width="3" stroke-linecap="round"/>' +
+        '<rect x="80" y="40" width="9" height="34" rx="4" fill="#86C5EA" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M84.5 40 Q78 32 84.5 24 Q91 32 84.5 40 Z" fill="#FFCE6B" stroke="#5B4636" stroke-width="2.4"/>' +
+        '<path d="M84.5 40 Q88 34 84.5 28" fill="none" stroke="#FF8A6B" stroke-width="1.8" stroke-linecap="round"/>' +
+      '</svg>',
+
+    put_on:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<circle cx="48" cy="68" r="17" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="42" cy="66" r="1.8" fill="#4A3226"/><circle cx="54" cy="66" r="1.8" fill="#4A3226"/>' +
+        '<path d="M43 73 q5 4 10 0" fill="none" stroke="#4A3226" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M28 48 Q48 26 68 48 Z" fill="#8FD3B6" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M23 49 H73" stroke="#5B4636" stroke-width="6" stroke-linecap="round"/>' +
+        '<path d="M84 20 V44 M78 38 L84 44 L90 38" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>',
+
+    take_off:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<circle cx="44" cy="70" r="17" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="38" cy="68" r="1.8" fill="#4A3226"/><circle cx="50" cy="68" r="1.8" fill="#4A3226"/>' +
+        '<path d="M39 75 q5 4 10 0" fill="none" stroke="#4A3226" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<g transform="rotate(18 62 32)">' +
+          '<path d="M44 36 Q62 16 80 36 Z" fill="#8FD3B6" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+          '<path d="M40 37 H84" stroke="#5B4636" stroke-width="6" stroke-linecap="round"/>' +
+        '</g>' +
+        '<path d="M16 46 V22 M10 28 L16 22 L22 28" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M62 56 q6 -2 10 2" fill="none" stroke="#5B4636" stroke-width="2.2" stroke-linecap="round" opacity=".45"/>' +
+      '</svg>',
+
+    move:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<path d="M8 86 H92" stroke="#D8C2A8" stroke-width="3" stroke-linecap="round"/>' +
+        '<circle cx="62" cy="24" r="10" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M58 34 L46 52" stroke="#86C5EA" stroke-width="12" stroke-linecap="round"/>' +
+        '<path d="M52 44 L66 36 M50 48 L36 42" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
+        '<path d="M46 54 L32 64 L20 64 M47 54 L60 66 L72 64" fill="none" stroke="#F4C99B" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M14 34 H30 M6 46 H22 M10 58 H24" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round" opacity=".4"/>' +
+        '<path d="M72 18 q5 2 6 7" fill="none" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round" opacity=".45"/>' +
+      '</svg>',
+
+    donkey:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="86" rx="30" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<path d="M18 64 Q16 48 30 44 L52 44 Q62 44 64 56 L64 76 H54 L52 62 H34 L32 76 H22 Z" fill="#B8AFA5" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M52 46 Q54 34 64 32 L74 34 L78 44 L74 54 Q66 58 58 54 Z" fill="#C9C0B6" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M60 33 L55 13 L67 31 Z" fill="#B8AFA5" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M72 33 L78 13 L81 35 Z" fill="#B8AFA5" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
+        '<ellipse cx="77" cy="46" rx="8" ry="6" fill="#E6DED4" stroke="#5B4636" stroke-width="2.6"/>' +
+        '<circle cx="66" cy="40" r="2" fill="#4A3226"/><circle cx="81" cy="46" r="1.4" fill="#4A3226"/>' +
+        '<path d="M26 76 V86 M42 76 V86 M54 76 V86 M62 76 V86" stroke="#5B4636" stroke-width="5" stroke-linecap="round"/>' +
+        '<path d="M18 58 Q10 62 12 72" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M38 44 l2 -6 M46 44 l2 -6" stroke="#5B4636" stroke-width="2.2" stroke-linecap="round" opacity=".45"/>' +
+      '</svg>',
+
+    on:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="87" rx="30" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<rect x="30" y="48" width="40" height="34" rx="5" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M30 58 H70" stroke="#5B4636" stroke-width="2" opacity=".4"/>' +
+        '<circle cx="50" cy="38" r="10" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="46" cy="34" r="2.4" fill="#FFF3DF"/>' +
+      '</svg>',
+
+    inside:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="87" rx="30" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<path d="M30 34 H70 V76 H30 Z" fill="#E0A96B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="50" cy="64" r="10" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="46" cy="60" r="2.4" fill="#FFF3DF"/>' +
+        '<path d="M26 56 H74 V82 H26 Z" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M26 56 H74" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M32 60 V78 M68 60 V78" stroke="#5B4636" stroke-width="1.8" opacity=".25"/>' +
+      '</svg>',
+
+    under:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="87" rx="30" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<rect x="30" y="24" width="40" height="34" rx="5" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M30 34 H70" stroke="#5B4636" stroke-width="2" opacity=".4"/>' +
+        '<circle cx="50" cy="70" r="10" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="46" cy="66" r="2.4" fill="#FFF3DF"/>' +
+      '</svg>',
+
+    in_front:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="87" rx="30" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<rect x="30" y="34" width="40" height="36" rx="5" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M30 44 H70" stroke="#5B4636" stroke-width="2" opacity=".4"/>' +
+        '<circle cx="50" cy="74" r="11" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="46" cy="70" r="2.6" fill="#FFF3DF"/>' +
+      '</svg>',
+
+    behind:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="87" rx="30" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<circle cx="64" cy="60" r="17" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="74" cy="54" r="3.6" fill="#FFF3DF"/>' +
+        '<rect x="22" y="42" width="42" height="42" rx="5" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M22 52 H64" stroke="#5B4636" stroke-width="2" opacity=".4"/>' +
+        '<path d="M30 62 V78 M50 62 V78" stroke="#5B4636" stroke-width="1.8" opacity=".25"/>' +
+      '</svg>',
+
+    next_to:
+      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<ellipse cx="50" cy="87" rx="34" ry="4" fill="#5B4636" opacity=".10"/>' +
+        '<rect x="16" y="48" width="34" height="32" rx="5" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
+        '<path d="M16 57 H50" stroke="#5B4636" stroke-width="2" opacity=".4"/>' +
+        '<circle cx="68" cy="70" r="10" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
+        '<circle cx="64" cy="66" r="2.4" fill="#FFF3DF"/>' +
+      '</svg>'
+  };
+
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -2363,11 +4011,12 @@
     });
     p.sessions = Math.max(0, Number(p.sessions) || 0);
     p.stats = Object.assign({ trials: 0, firstTry: 0 }, p.stats || {});
+    p.checks = p.checks || {};
     return p;
   }
 
   var saved = load();
-  var settings = Object.assign({ mode: 'both', length: 8, showHint: true, enLevel: 2, frLevel: 2, speed: 1 }, saved.settings || {});
+  var settings = Object.assign({ mode: 'both', length: 8, showHint: true, enLevel: 2, frLevel: 2, speed: 1, pos: 'all', pack: '' }, saved.settings || {});
   if (['en', 'fr', 'both'].indexOf(settings.mode) < 0) settings.mode = 'both';
   if ([6, 8, 10].indexOf(Number(settings.length)) < 0) settings.length = 8;
   settings.length = Number(settings.length);
@@ -2375,6 +4024,8 @@
   settings.enLevel = [1, 2, 3].indexOf(Number(settings.enLevel)) >= 0 ? Number(settings.enLevel) : 2;
   settings.frLevel = [1, 2].indexOf(Number(settings.frLevel)) >= 0 ? Number(settings.frLevel) : 2;
   settings.speed = [0.8, 1, 1.2].indexOf(Number(settings.speed)) >= 0 ? Number(settings.speed) : 1;
+  if (settings.pos !== 'all' && !POS[settings.pos]) settings.pos = 'all';
+  if (!PACK_BY_ID[settings.pack]) settings.pack = PACKS[0] ? PACKS[0].id : '';
   var progress = normalize(saved.progress);
 
   var EN_LEVELS = { 1: '单词句', 2: '两句话', 3: '听描述猜' };
@@ -2389,7 +4040,7 @@
 
   function promptFor(item) {
     var word = BY_ID[item.id][item.lang];
-    var level = Math.min(levelFor(item.lang), word.prompts.length);
+    var level = Math.min(item.level || levelFor(item.lang), word.prompts.length);
     var index = level - 1;
     return {
       text: word.prompts[index],
@@ -2419,6 +4070,32 @@
 
   function seenCount(lang) {
     return WORDS.filter(function (w) { return getRec(w.id)[lang].seen; }).length;
+  }
+
+  function activeWords() {
+    return settings.pos === 'all' ? WORDS : WORDS.filter(function (w) { return w.pos === settings.pos; });
+  }
+
+  function dueWords() {
+    var no = progress.sessions + 1;
+    return WORDS.filter(function (w) {
+      return LANGS.some(function (l) {
+        var r = getRec(w.id)[l];
+        return r.seen && r.due <= no;
+      });
+    });
+  }
+
+  function packWordList(pack) {
+    var out = [];
+    ((pack && pack.words) || []).forEach(function (id) {
+      if (BY_ID[id] && out.indexOf(id) < 0) out.push(id);
+    });
+    return out;
+  }
+
+  function artFor(id) {
+    return ART[id] || BY_ID[id].emoji;
   }
 
   /* ---------------- audio ---------------- */
@@ -2605,30 +4282,64 @@
   function pickFoils(targetId, n) {
     var target = BY_ID[targetId];
     var bad = CONFUSE[targetId] || [];
+    var picked = [];
+    // Some contrasts are worth showing every time: dirty/clean, on/under,
+    // skirt/dress, put on/take off. The data can name those foils explicitly.
+    (target.foils || []).forEach(function (id) {
+      if (picked.length < n && id !== targetId && BY_ID[id] && picked.indexOf(id) < 0) picked.push(id);
+    });
     var pool = shuffle(WORDS.filter(function (w) {
-      return w.id !== targetId && bad.indexOf(w.id) < 0;
+      return w.id !== targetId && bad.indexOf(w.id) < 0 && picked.indexOf(w.id) < 0;
     }));
     pool.sort(function (a, b) {
       return (a.cat === target.cat ? 1 : 0) - (b.cat === target.cat ? 1 : 0);
     });
-    return pool.slice(0, n).map(function (w) { return w.id; });
+    pool.forEach(function (w) { if (picked.length < n) picked.push(w.id); });
+    return picked;
   }
 
-  function buildSession() {
+  function sessionBase(no) {
+    return {
+      no: no,
+      index: 0,
+      completed: 0,
+      stars: 0,
+      misses: 0,
+      penalized: false,
+      answered: false,
+      locked: false,
+      current: null,
+      cardIds: [],
+      breakAt: 0,
+      breakDone: false,
+      promptPlays: 0,
+      replayTimer: 0,
+      recorded: {},
+      demoTimer: 0,
+      demo: false,
+      results: []
+    };
+  }
+
+  function buildSession(kind) {
+    kind = kind || 'play';
+    var review = kind === 'review';
     var mode = settings.mode;
-    var len = settings.length;
+    var pool = review ? WORDS : activeWords();
+    var len = Math.min(settings.length, pool.length);
     var no = progress.sessions + 1;
     var langs = mode === 'both' ? LANGS : [mode];
-    var totalSeen = WORDS.filter(function (w) {
+    var totalSeen = pool.filter(function (w) {
       return langs.some(function (l) { return getRec(w.id)[l].seen; });
     }).length;
 
     // After the first session, reserve three slots for brand-new words so the
-    // 60-word list keeps opening up while due reviews still take most slots.
-    var newCap = totalSeen === 0 ? len : 3;
-    var dueCap = Math.max(0, len - newCap);
+    // word list keeps opening up while due reviews still take most slots.
+    // Review mode only ever draws words that are due.
+    var newCap = review ? 0 : (totalSeen === 0 ? len : Math.min(3, len));
+    var dueCap = review ? len : Math.max(0, len - newCap);
 
-    var concepts = WORDS.map(function (w) {
+    var concepts = pool.map(function (w) {
       var recs = langs.map(function (l) { return getRec(w.id)[l]; });
       return {
         id: w.id,
@@ -2642,6 +4353,7 @@
     var dueOnes = concepts.filter(function (c) { return c.dueAny; }).sort(function (a, b) {
       return a.minLvl - b.minLvl || a.dueMin - b.dueMin || Math.random() - 0.5;
     });
+    if (review && !dueOnes.length) return null;
     var newOnes = shuffle(concepts.filter(function (c) { return !c.seenAny; }));
     newOnes.sort(function (a, b) {
       return (INTEREST[b.id] ? 1 : 0) - (INTEREST[a.id] ? 1 : 0);
@@ -2650,16 +4362,20 @@
 
     // Exactly one entry per concept: no word repeats inside a round.
     var picked = [];
-    dueOnes.forEach(function (c) { if (picked.length < dueCap) picked.push(c); });
-    var added = 0;
-    newOnes.forEach(function (c) {
-      if (picked.length >= len || added >= newCap) return;
-      picked.push(c); added++;
-    });
-    rest.forEach(function (c) { if (picked.length < len) picked.push(c); });
-    newOnes.forEach(function (c) {
-      if (picked.length < len && picked.indexOf(c) < 0) picked.push(c);
-    });
+    if (review) {
+      dueOnes.forEach(function (c) { if (picked.length < len) picked.push(c); });
+    } else {
+      dueOnes.forEach(function (c) { if (picked.length < dueCap) picked.push(c); });
+      var added = 0;
+      newOnes.forEach(function (c) {
+        if (picked.length >= len || added >= newCap) return;
+        picked.push(c); added++;
+      });
+      rest.forEach(function (c) { if (picked.length < len) picked.push(c); });
+      newOnes.forEach(function (c) {
+        if (picked.length < len && picked.indexOf(c) < 0) picked.push(c);
+      });
+    }
 
     shuffle(picked);
 
@@ -2696,34 +4412,43 @@
 
     var queue = picked.map(function (c, i) {
       return { id: c.id, lang: assignments[i], foils: pickFoils(c.id, 2) };
-    }).slice(0, len);
+    });
 
-    var breakAt = Math.floor(len / 2);
-    if (breakAt >= len) breakAt = 0;
+    var breakAt = Math.floor(queue.length / 2);
+    if (queue.length < 4 || breakAt >= queue.length) breakAt = 0;
 
     progress.sessions = no;
     save();
 
-    return {
-      no: no,
-      queue: queue,
-      index: 0,
-      completed: 0,
-      stars: 0,
-      misses: 0,
-      penalized: false,
-      answered: false,
-      locked: false,
-      current: null,
-      cardIds: [],
-      breakAt: breakAt,
-      breakDone: false,
-      promptPlays: 0,
-      replayTimer: 0,
-      recorded: {},
-      demoTimer: 0,
-      demo: progress.sessions === 1 && progress.stats.trials === 0
-    };
+    var s = sessionBase(no);
+    s.kind = kind;
+    s.queue = queue;
+    s.breakAt = breakAt;
+    s.demo = kind === 'play' && progress.sessions === 1 && progress.stats.trials === 0;
+    return s;
+  }
+
+  function buildCheck(packId) {
+    var pack = PACK_BY_ID[packId] || PACKS[0];
+    if (!pack) return null;
+    var ids = packWordList(pack);
+    if (!ids.length) return null;
+    var no = progress.sessions + 1;
+    var lang = pack.lang === 'en' ? 'en' : 'fr';
+    var level = Math.max(1, Math.min(3, Number(pack.level) || 1));
+    var queue = shuffle(ids.slice()).map(function (id) {
+      return { id: id, lang: lang, level: level, foils: pickFoils(id, 2) };
+    });
+    progress.sessions = no;
+    save();
+
+    var s = sessionBase(no);
+    s.kind = 'check';
+    s.packId = pack.id;
+    s.packLabel = pack.label;
+    s.queue = queue;
+    s.breakAt = 0;
+    return s;
   }
 
   function record(s, ok) {
@@ -2760,18 +4485,29 @@
   function updateHome() {
     $$('.mode-pill').forEach(function (b) { b.classList.toggle('sel', b.dataset.mode === settings.mode); });
     var levels = $('#home-levels');
-    if (levels) levels.textContent = '英语：' + EN_LEVELS[settings.enLevel] + ' · Français：' + FR_LEVELS[settings.frLevel];
+    if (levels) {
+      levels.textContent = '英语：' + EN_LEVELS[settings.enLevel] + ' · Français：' + FR_LEVELS[settings.frLevel] +
+        (settings.pos === 'all' ? '' : ' · 本轮：' + POS[settings.pos].label);
+    }
     var en = seenCount('en'), fr = seenCount('fr');
     var stats = $('#home-stats');
     if (!stats) return;
     if (progress.sessions === 0) stats.textContent = '每轮 3–5 分钟 · 先陪她玩一次';
-    else stats.textContent = '英语 ' + en + '/' + WORDS.length + ' · 法语 ' + fr + '/' + WORDS.length;
+    else {
+      var due = dueWords().length;
+      stats.textContent = '英语 ' + en + '/' + WORDS.length + ' · 法语 ' + fr + '/' + WORDS.length +
+        (due ? ' · 待复习 ' + due : '');
+    }
   }
 
   function renderDots() {
     var s = state.session;
     var dots = $('#dots');
     if (!s || !dots) return;
+    if (s.kind === 'check') {
+      dots.innerHTML = '<span class="check-count">' + s.completed + ' / ' + s.queue.length + '</span>';
+      return;
+    }
     var html = '';
     for (var i = 0; i < s.queue.length; i++) {
       html += '<i class="dot' + (i < s.completed ? ' done' : '') + (i === s.index ? ' now' : '') + '"></i>';
@@ -2783,6 +4519,12 @@
     var w = BY_ID[item.id];
     var cap = $('#caption');
     if (!cap) return;
+    if (state.session && state.session.kind === 'check') {
+      cap.innerHTML = '';
+      cap.title = promptFor(item).text;
+      cap.classList.add('hide');
+      return;
+    }
     if (settings.mode === 'both') {
       if (w.en.phrase === w.fr.phrase) {
         cap.innerHTML = '<span class="on">' + w.en.phrase + '</span>';
@@ -2812,13 +4554,16 @@
     var game = $('#screen-game');
     game.dataset.lang = item.lang;
     var badge = $('#badge');
-    badge.textContent = (item.lang === 'en' ? 'EN' : 'FR') + ' L' + levelFor(item.lang);
+    badge.textContent = s.kind === 'check'
+      ? (item.lang === 'en' ? 'EN' : 'FR') + ' · 检查'
+      : (item.lang === 'en' ? 'EN' : 'FR') + ' L' + (item.level || levelFor(item.lang));
     badge.className = 'lang-badge ' + item.lang;
 
     var cards = $('#cards');
     cards.innerHTML = s.cardIds.map(function (id, i) {
+      var isArt = !!ART[id];
       return '<button class="card" data-id="' + id + '" style="--d:' + (i * 70) + 'ms" aria-label="图片选项 ' + (i + 1) + '">' +
-        '<span class="art">' + BY_ID[id].emoji + '</span></button>';
+        '<span class="art' + (isArt ? ' art-svg' : '') + '">' + artFor(id) + '</span></button>';
     }).join('');
 
     requestAnimationFrame(function () {
@@ -2847,7 +4592,7 @@
   }
 
   function overlayOpen() {
-    return ['#pause', '#tpr', '#settings'].some(function (sel) {
+    return ['#pause', '#tpr', '#settings', '#check-intro'].some(function (sel) {
       var el = $(sel);
       return el && el.classList.contains('open');
     });
@@ -2871,17 +4616,39 @@
 
   /* ---------------- game flow ---------------- */
 
-  function startSession() {
+  function closeAllOverlays() {
+    ['#pause', '#settings', '#check-intro', '#tpr'].forEach(function (sel) {
+      var el = $(sel);
+      if (el) el.classList.remove('open');
+    });
+  }
+
+  function startSession(kind, packId) {
     if (state.starting) return;
     state.starting = true;
     stopAudio();
-    var s = buildSession();
+    closeAllOverlays();
+    var s = kind === 'check' ? buildCheck(packId) : buildSession(kind);
+    if (!s || !s.queue.length) {
+      state.starting = false;
+      var isReview = kind === 'review';
+      toast(isReview ? '现在没有到期的复习词，先玩一轮新词吧' : '这个词类暂时没有可用的词');
+      return;
+    }
+    if (kind === 'play' && s.queue.length < settings.length) {
+      toast('这一类只有 ' + s.queue.length + ' 个词，本轮 ' + s.queue.length + ' 次');
+    }
+    if (kind === 'review' && s.queue.length < settings.length) {
+      toast('到期复习 ' + s.queue.length + ' 个词，本轮 ' + s.queue.length + ' 次');
+    }
     state.session = s;
     showScreen('game');
     renderRound(true);
     s.locked = true;
     var firstLang = s.queue[0] ? s.queue[0].lang : (settings.mode === 'both' ? 'en' : settings.mode);
-    var intro = say(firstLang + '/intro', INTRO[firstLang], firstLang);
+    var intro = kind === 'check'
+      ? say(firstLang + '/check', CHECK[firstLang], firstLang)
+      : say(firstLang + '/intro', INTRO[firstLang], firstLang);
     // Never let a short/stalled intro clip lock the board: fall back quickly.
     var unlockTimer = setTimeout(function () {
       if (state.session === s && !s.answered && s.locked) {
@@ -2903,6 +4670,7 @@
     var s = state.session;
     if (!s || !s.current || s.locked || s.answered) return;
     if (id === s.current.id) correct(el);
+    else if (s.kind === 'check') checkWrong(el);
     else wrong(el);
   }
 
@@ -2922,6 +4690,7 @@
     burstAt(el, 12);
     happyMomo();
     record(s, true);
+    if (s.kind === 'check') s.results.push({ id: s.current.id, ok: true });
     save();
     renderDots();
 
@@ -2962,6 +4731,41 @@
     }, 460);
   }
 
+  function checkWrong(el) {
+    var s = state.session;
+    if (!s) return;
+    s.answered = true;
+    s.locked = true;
+    s.completed++;
+    clearTimeout(s.replayTimer);
+    clearTimeout(s.demoTimer);
+    stopAudio();
+    el.classList.add('wrong');
+    sfx('wrong');
+    s.misses++;
+    record(s, false);
+    s.results.push({ id: s.current.id, ok: false });
+    save();
+    renderDots();
+
+    var item = s.current;
+    var target = $('#cards').querySelector('[data-id="' + item.id + '"]');
+    if (target) target.classList.add('hint');
+
+    setTimeout(async function () {
+      if (state.session !== s) return;
+      el.classList.remove('wrong');
+      el.classList.add('dim');
+      // A check gives one attempt, but it still shows the right answer so the
+      // child learns from the miss instead of just seeing a score.
+      var p = promptFor({ id: item.id, lang: item.lang, level: item.level || 1 });
+      await say(p.file, p.text, item.lang);
+      if (state.session !== s) return;
+      s.locked = false;
+      setTimeout(function () { if (state.session === s) next(); }, 450);
+    }, 700);
+  }
+
   function next() {
     var s = state.session;
     if (!s) return;
@@ -2992,23 +4796,97 @@
     stopAudio();
     state.last = s;
     state.session = null;
-    $('#end-stars').textContent = s.completed;
-    $('#end-total').textContent = s.queue.length;
-    $('#end-title').textContent = s.completed === 0 ? '下次见！' : (s.completed >= s.queue.length ? '全部完成！' : '今天先到这里');
-    var basket = [];
-    s.queue.slice(0, s.completed).forEach(function (q) {
-      if (basket.indexOf(q.id) < 0) basket.push(q.id);
-    });
-    $('#end-basket').innerHTML = basket.map(function (id) {
-      return '<span title="' + BY_ID[id].en.phrase + ' / ' + BY_ID[id].fr.phrase + '">' + BY_ID[id].emoji + '</span>';
-    }).join('');
+
+    var isCheck = s.kind === 'check';
+    var answered = s.results.length;
+    var correctCount = s.results.filter(function (r) { return r.ok; }).length;
+    var total = s.queue.length;
+    var done = isCheck ? answered : s.completed;
+    var aborted = isCheck && done < total;
+
+    $('#end-stars').textContent = isCheck ? correctCount : s.completed;
+    $('#end-unit').innerHTML = isCheck
+      ? (aborted ? '/ ' + answered + ' 答对（已中断，共 ' + total + ' 词）' : '/ ' + total + ' 答对')
+      : '/ ' + total + ' 颗星';
+
+    if (isCheck) {
+      $('#end-title').textContent = done === 0 ? '检查中断' : (aborted ? '检查中断' : (correctCount === total ? '全部答对！' : '检查完成'));
+    } else if (s.kind === 'review') {
+      $('#end-title').textContent = s.completed === 0 ? '下次见！' : (s.completed >= total ? '复习完成！' : '今天先到这里');
+    } else {
+      $('#end-title').textContent = s.completed === 0 ? '下次见！' : (s.completed >= total ? '全部完成！' : '今天先到这里');
+    }
+
+    var report = $('#end-report');
+    if (isCheck) {
+      var missed = s.results.filter(function (r) { return !r.ok; }).map(function (r) { return r.id; });
+      var pct = answered ? Math.round(correctCount / answered * 100) : 0;
+      $('#report-score').textContent = '答对 ' + correctCount + ' / ' + (aborted ? answered : total);
+      $('#report-pct').textContent = answered ? pct + '%' : '—';
+      var byPos = {};
+      missed.forEach(function (id) { var p = BY_ID[id].pos; byPos[p] = (byPos[p] || 0) + 1; });
+      var meta = Object.keys(byPos).map(function (p) { return POS[p].label + ' ' + byPos[p]; }).join(' · ');
+      $('#report-meta').textContent = missed.length
+        ? '需要再看一眼：' + meta
+        : '';
+      $('#report-missed').innerHTML = missed.length
+        ? missed.map(function (id) {
+            var w = BY_ID[id];
+            return '<span class="miss"><b>' + w.emoji + '</b>' + w.fr.phrase + '</span>';
+          }).join('')
+        : '<span class="miss all">全部答对，太棒了！</span>';
+      report.hidden = false;
+      $('#end-basket').innerHTML = '';
+      progress.checks[s.packId] = {
+        at: Date.now(),
+        total: total,
+        answered: answered,
+        correct: correctCount,
+        missed: missed,
+        aborted: aborted
+      };
+      save();
+    } else {
+      report.hidden = true;
+      var basket = [];
+      s.queue.slice(0, s.completed).forEach(function (q) {
+        if (basket.indexOf(q.id) < 0) basket.push(q.id);
+      });
+      $('#end-basket').innerHTML = basket.map(function (id) {
+        return '<span title="' + BY_ID[id].en.phrase + ' / ' + BY_ID[id].fr.phrase + '">' + BY_ID[id].emoji + '</span>';
+      }).join('');
+    }
+
+    $('#screen-end').classList.toggle('check', isCheck);
+    $('#end-sub').textContent = isCheck
+      ? (aborted
+          ? '这次先到这里，已经答过的词都记在下面'
+          : (correctCount === total ? '每个词都认出来了，太棒了！' : '没答对的词都留在下面，下次陪她再看一遍'))
+      : (s.kind === 'review' ? '这次复习的词都收好啦' : 'Momo 把星星都收进小篮子里啦');
+    $('#btn-again-label').textContent = isCheck ? '再检查一次' : (s.kind === 'review' ? '再复习一次' : '再玩一次');
     showScreen('end');
+
+    if (isCheck) {
+      if (done === 0) return;
+      var lang = s.queue[0].lang;
+      if (correctCount === total) {
+        sfx('win');
+        confettiRain(9);
+      } else {
+        sfx('correct');
+      }
+      setTimeout(function () {
+        if (state.screen === 'end') say(lang + '/check_end', CHECK_END[lang], lang);
+      }, 500);
+      return;
+    }
+
     if (s.completed > 0) {
       sfx('win');
       confettiRain(9);
-      var lang = s.queue[s.queue.length - 1].lang;
+      var lastLang = s.queue[s.queue.length - 1].lang;
       setTimeout(function () {
-        if (state.screen === 'end') say(lang + '/end', END[lang], lang);
+        if (state.screen === 'end') say(lastLang + '/end', END[lastLang], lastLang);
       }, 600);
     }
   }
@@ -3021,24 +4899,97 @@
     return html;
   }
 
+  var bankFilter = 'all';
+
+  function shortDate(at) {
+    var d = new Date(at);
+    if (isNaN(d.getTime())) return '';
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function renderBank() {
+    $$('#bank-filter button').forEach(function (b) {
+      b.classList.toggle('sel', b.dataset.pos === bankFilter);
+    });
+    var counts = {};
+    WORDS.forEach(function (w) { counts[w.pos] = (counts[w.pos] || 0) + 1; });
+    $('#bank-summary').textContent = '词库 ' + WORDS.length + ' 词 · ' +
+      POS_ORDER.map(function (p) { return POS[p].label + ' ' + (counts[p] || 0); }).join(' · ');
+
+    var groups = POS_ORDER.filter(function (p) { return bankFilter === 'all' || p === bankFilter; });
+    var html = '';
+    groups.forEach(function (p) {
+      var list = WORDS.filter(function (w) { return w.pos === p; });
+      if (!list.length) return;
+      html += '<div class="pgroup"><div class="pgroup-head"><b>' + POS[p].label + '</b><span>' +
+        list.length + ' 词 · ' + POS[p].hint + '</span></div><div class="pgrid">' +
+        list.map(function (w) {
+          var r = getRec(w.id);
+          return '<div class="pcell" title="' + w.fr.phrase + ' / ' + w.en.phrase + '">' +
+            '<span class="pemoji">' + w.emoji + '</span>' +
+            '<span class="pname">' + w.fr.phrase + '</span>' +
+            '<div class="pbars"><div class="pbar en">' + bar(r.en.lvl) + '</div><div class="pbar fr">' + bar(r.fr.lvl) + '</div></div>' +
+            '</div>';
+        }).join('') + '</div></div>';
+    });
+    $('#settings-grid').innerHTML = html;
+  }
+
+  function renderCheckBlock() {
+    var sel = $('#check-pack');
+    if (sel) {
+      sel.innerHTML = PACKS.map(function (p) {
+        return '<option value="' + p.id + '"' + (p.id === settings.pack ? ' selected' : '') + '>' +
+          p.label + ' · ' + packWordList(p).length + ' 词</option>';
+      }).join('');
+    }
+    var pack = PACK_BY_ID[settings.pack] || PACKS[0];
+    if (!pack) return;
+    var list = packWordList(pack);
+    var last = progress.checks[pack.id];
+    var box = $('#check-last');
+    if (!last) {
+      box.innerHTML = '<span class="muted">还没有检查过。</span>';
+    } else {
+      var pct = last.answered ? Math.round(last.correct / last.answered * 100) : 0;
+      var line = last.aborted
+        ? '上次 ' + shortDate(last.at) + ' 中断：答对 ' + last.correct + ' / ' + last.answered
+        : '上次 ' + shortDate(last.at) + '：答对 ' + last.correct + ' / ' + last.total + '（' + pct + '%）';
+      var missed = (last.missed || []).map(function (id) {
+        var w = BY_ID[id];
+        if (!w) return '';
+        return '<span class="miss"><b>' + w.emoji + '</b>' + w.fr.phrase + '</span>';
+      }).join('');
+      box.innerHTML = '<div class="check-last-line">' + line + '</div>' +
+        (missed ? '<div class="check-last-missed">' + missed + '</div>' : '');
+    }
+    $('#pack-words').innerHTML = list.map(function (id) {
+      var w = BY_ID[id];
+      return '<span class="miss"><b>' + w.emoji + '</b>' + w.fr.phrase + '</span>';
+    }).join('');
+    var due = dueWords().length;
+    $('#due-count').textContent = due ? '有 ' + due + ' 个词到期' : '今天没有到期的词';
+    $('#btn-review').disabled = due === 0;
+    $('#btn-review').textContent = due
+      ? '开始复习 · ' + Math.min(due, settings.length) + ' 词'
+      : '暂无到期复习';
+    $('#btn-check').textContent = '开始检查 · ' + list.length + ' 词';
+  }
+
   function renderSettings() {
     $$('#settings-modes button').forEach(function (b) { b.classList.toggle('sel', b.dataset.mode === settings.mode); });
     $$('#settings-length button').forEach(function (b) { b.classList.toggle('sel', Number(b.dataset.len) === settings.length); });
     $$('#settings-en-level button').forEach(function (b) { b.classList.toggle('sel', Number(b.dataset.enLevel) === settings.enLevel); });
     $$('#settings-fr-level button').forEach(function (b) { b.classList.toggle('sel', Number(b.dataset.frLevel) === settings.frLevel); });
     $$('#settings-speed button').forEach(function (b) { b.classList.toggle('sel', Number(b.dataset.speed) === settings.speed); });
+    $$('#settings-pos button').forEach(function (b) { b.classList.toggle('sel', b.dataset.pos === settings.pos); });
     $('#en-preview').textContent = 'L' + settings.enLevel + ' 示例：' + BY_ID.apple.en.prompts[settings.enLevel - 1];
     $('#fr-preview').textContent = 'L' + settings.frLevel + ' 示例：' + BY_ID.apple.fr.prompts[settings.frLevel - 1];
     $('#toggle-hint').classList.toggle('on', settings.showHint);
     $('#toggle-hint').setAttribute('aria-checked', settings.showHint ? 'true' : 'false');
     $('#settings-summary').textContent = '已学 英语 ' + seenCount('en') + '/' + WORDS.length + ' · 法语 ' + seenCount('fr') + '/' + WORDS.length;
-    $('#settings-grid').innerHTML = WORDS.map(function (w) {
-      var r = getRec(w.id);
-      return '<div class="pcell" title="' + w.en.phrase + ' / ' + w.fr.phrase + '">' +
-        '<span class="pemoji">' + w.emoji + '</span>' +
-        '<div class="pbars"><div class="pbar en">' + bar(r.en.lvl) + '</div><div class="pbar fr">' + bar(r.fr.lvl) + '</div></div>' +
-        '</div>';
-    }).join('');
+    renderCheckBlock();
+    renderBank();
   }
 
   function openSettings() {
@@ -3052,6 +5003,18 @@
   function closeSettings() {
     $('#settings').classList.remove('open');
     if (state.session && state.session.current && !state.session.answered) playPrompt();
+  }
+
+  function openCheckIntro() {
+    var pack = PACK_BY_ID[settings.pack] || PACKS[0];
+    if (!pack) { toast('还没有可用的检查词单'); return; }
+    var list = packWordList(pack);
+    var lang = pack.lang === 'en' ? '英语' : '法语';
+    var minutes = Math.max(3, Math.ceil(list.length * 8 / 60));
+    $('#check-intro-text').textContent = pack.label + '：' + list.length + ' 个词，约 ' +
+      minutes + ' 分钟。用' + lang + '提示，每个词只出一次。';
+    $('#btn-check-start-label').textContent = '开始检查 · ' + list.length + ' 词';
+    $('#check-intro').classList.add('open');
   }
 
   async function cacheAllAudio() {
@@ -3105,14 +5068,19 @@
     } catch (e) {
       status.textContent = '下载失败，请检查网络后重试。';
       btn.disabled = false;
-      btn.textContent = '下载离线音频（约 8 MB）';
+      btn.textContent = '下载离线音频（约 14 MB）';
     }
   }
 
   /* ---------------- events ---------------- */
 
-  $('#btn-start').addEventListener('click', function () { sfx('tap'); startSession(); });
-  $('#btn-again').addEventListener('click', function () { sfx('tap'); startSession(); });
+  $('#btn-start').addEventListener('click', function () { sfx('tap'); startSession('play'); });
+  $('#btn-again').addEventListener('click', function () {
+    sfx('tap');
+    var last = state.last;
+    if (last && last.kind === 'check') startSession('check', last.packId);
+    else startSession(last && last.kind === 'review' ? 'review' : 'play');
+  });
   $('#btn-home').addEventListener('click', function () { stopAudio(); showScreen('home'); });
   $('#btn-replay').addEventListener('click', function () { playPrompt(); });
   $('#btn-pause').addEventListener('click', function () { stopAudio(); $('#pause').classList.add('open'); });
@@ -3255,6 +5223,40 @@
     settings.speed = Number(b.dataset.speed);
     save(); renderSettings(); sfx('tap');
   });
+  $('#settings-pos').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-pos]');
+    if (!b) return;
+    settings.pos = b.dataset.pos;
+    save(); renderSettings(); updateHome(); sfx('tap');
+  });
+  $('#bank-filter').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-pos]');
+    if (!b) return;
+    bankFilter = b.dataset.pos;
+    renderBank(); sfx('tap');
+  });
+  $('#check-pack').addEventListener('change', function () {
+    settings.pack = $('#check-pack').value;
+    save();
+    renderCheckBlock();
+    sfx('tap');
+  });
+  $('#btn-review').addEventListener('click', function () {
+    if (dueWords().length === 0) { toast('现在没有到期的复习词'); return; }
+    sfx('tap');
+    startSession('review');
+  });
+  $('#btn-check').addEventListener('click', function () { sfx('tap'); openCheckIntro(); });
+  $('#btn-check-start').addEventListener('click', function () {
+    sfx('tap');
+    startSession('check', settings.pack);
+  });
+  $('#btn-check-cancel').addEventListener('click', function () {
+    $('#check-intro').classList.remove('open');
+  });
+  $('#check-intro').addEventListener('click', function (e) {
+    if (e.target === $('#check-intro')) $('#check-intro').classList.remove('open');
+  });
   $('#toggle-hint').addEventListener('click', function () {
     settings.showHint = !settings.showHint;
     save(); renderSettings();
@@ -3299,6 +5301,7 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
+      if ($('#check-intro').classList.contains('open')) { $('#check-intro').classList.remove('open'); return; }
       if ($('#settings').classList.contains('open')) { closeSettings(); return; }
       if ($('#pause').classList.contains('open')) { $('#btn-resume').click(); return; }
       if (state.screen === 'game') { stopAudio(); $('#pause').classList.add('open'); return; }
@@ -3360,9 +5363,13 @@
       var el = $('#cards').querySelector('[data-id="' + id + '"]');
       if (el) el.click();
     },
-    start: function () { startSession(); },
+    start: function (kind, packId) { startSession(kind, packId); },
+    check: function (packId) { startSession('check', packId || settings.pack); },
     end: function () { endSession(); },
-    openSettings: openSettings
+    openSettings: openSettings,
+    openCheckIntro: openCheckIntro,
+    art: ART,
+    packs: PACKS
   };
 })();
 </script>

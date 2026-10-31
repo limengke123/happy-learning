@@ -1,7 +1,7 @@
 /* Momo PWA service worker.
  * Bump VERSION when shipping changes; the page's offline-audio cache uses the
  * same cache name in index.html (search for PWA_CACHE). */
-const VERSION = 'momo-static-v1';
+const VERSION = 'momo-static-v2';
 const CACHE = VERSION;
 const SCOPE = new URL('./', self.location).href;
 const AUDIO_PREFIX = new URL('audio/', SCOPE).pathname;
