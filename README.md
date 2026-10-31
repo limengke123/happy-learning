@@ -149,8 +149,8 @@ iPad 上玩：
 
 改代码后如果发现还是旧界面，把这两个版本号一起加一：
 
-- `index.html` 里的 `PWA_CACHE`（当前 `momo-static-v2`）
-- `sw.js` 里的 `VERSION`（当前 `momo-static-v2`）
+- `index.html` 里的 `PWA_CACHE`（当前 `momo-static-v3`）
+- `sw.js` 里的 `VERSION`（当前 `momo-static-v3`）
 
 它们必须保持一致，否则离线音频缓存和 Service Worker 会对不上。
 

@@ -1,7 +1,7 @@
 /* Momo PWA service worker.
  * Bump VERSION when shipping changes; the page's offline-audio cache uses the
  * same cache name in index.html (search for PWA_CACHE). */
-const VERSION = 'momo-static-v2';
+const VERSION = 'momo-static-v3';
 const CACHE = VERSION;
 const SCOPE = new URL('./', self.location).href;
 const AUDIO_PREFIX = new URL('audio/', SCOPE).pathname;
@@ -38,10 +38,14 @@ self.addEventListener('activate', (event) => {
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE);
   const hit = await cache.match(request);
-  if (hit) return hit;
+  // Only a complete 200 response is safe to reuse. Media elements send Range
+  // requests; a cached 206 slice makes the next playback fail with a format
+  // error, so drop any partial entry and fetch again.
+  if (hit && hit.status === 200) return hit;
+  if (hit) await cache.delete(request);
   try {
     const response = await fetch(request);
-    if (response && response.ok) await cache.put(request, response.clone());
+    if (response && response.status === 200) await cache.put(request, response.clone());
     return response;
   } catch (error) {
     return Response.error();
