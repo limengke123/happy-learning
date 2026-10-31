@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Momo 的单词篮子",
   "short_name": "Momo",
-  "description": "给 2–4 岁双语宝宝的听音找图游戏：英语、法语、双语，60 个词。",
+  "description": "给 2–4 岁双语宝宝的听音找图游戏：英语、法语、双语，101 个词。",
   "lang": "zh-CN",
   "dir": "ltr",
   "start_url": "./?source=pwa",

@@ -140,25 +140,26 @@ iPad 上玩：
 
 - 首次在线打开后，界面本身会被 Service Worker 缓存；之后断网也能打开。
 - 想让**音频**也离线：家长设置 → **离线使用** →「下载离线音频（约 14 MB）」。下载完成后，飞行模式也能完整玩。
-- 不下载全部音频也可以；听过的音频会在播放时自动缓存。
+- 不下载全部音频也可以；某段音频第一次播放时，Service Worker 会缓存一份完整文件（媒体元素发 Range / 服务器回 206 时也会补抓完整版），之后离线可用。
 
 > **重要：** Service Worker / PWA 安装需要 **HTTPS 或 localhost**。  
 > 局域网地址 `http://192.168.x.x:8765` 只能在线玩，不能安装成 App、也不能离线；手机上请用上面的 GitHub Pages HTTPS 地址。
 
 ### 开发者注意
 
-改代码后如果发现还是旧界面，把这两个版本号一起加一：
+改代码后如果发现还是旧界面，把 `sw.js` 里的 `VERSION` 加一（当前 `v4`）。
 
-- `index.html` 里的 `PWA_CACHE`（当前 `momo-static-v3`）
-- `sw.js` 里的 `VERSION`（当前 `momo-static-v3`）
-
-它们必须保持一致，否则离线音频缓存和 Service Worker 会对不上。
+- 普通发版只会清掉旧的 shell 缓存（`momo-shell-*`），音频缓存 `momo-audio-v1` 会保留；不会让家长重新下载 14 MB。
+- 只有改了音频内容（增删词、改 prompt、替换录音）时才需要同时加 `AUDIO_CACHE` 的版本号；旧音频缓存会在 activate 时清掉。
+- 页面不再硬编码缓存名：`index.html` 通过 `postMessage` 向当前 Service Worker 查询音频缓存名，避免两个文件里的版本号对不上。
+- 从旧版（`momo-static-*`）升级时，Service Worker 会先把旧缓存里的音频迁移到 `momo-audio-v1`，再删旧缓存。
 
 ---
 
 ## 部署（GitHub Pages）
 
 - `main` 是源码分支；每次 push 后，`.github/workflows/sync-pages.yml` 会把 `main` 同步到 `gh-pages`。
+- push 和 PR 都会先跑 `python3 tools/validate.py`；校验失败不会发布。
 - GitHub Pages 从 `gh-pages` 根目录发布；`gh-pages` 更新后会自动重新构建。
 - 线上地址：<https://limengke123.github.io/happy-learning/>
 - 如果换仓库或 fork：在仓库 Settings → Pages 里把 Source 设为 `gh-pages` / root；或者直接推一个 `gh-pages` 分支。
@@ -302,7 +303,7 @@ python3 -m pip install edge-tts
 - 法语务必带冠词；动词用不定式（`partager`），形容词用阳性单数（`sale`、`propre`），位置词直接用 `sur` / `sous` 这种形式。
 - 英语短句里用 `the` 或 `a/an`，不要只留一个孤零零的名词。
 - 干扰项会优先选「不同主题」的词；如果两个词长得太像（香蕉 vs 月亮、猫 vs 狗），可以在 `index.html` 的 `CONFUSE` 里加一条，避免它们互相当干扰项。
-- 新词先跑 `python3 tools/generate_audio.py` 生成音频；没有音频时会退回浏览器 TTS，但 iPad 上音色不如 edge-tts 稳定。
+- 新词先跑 `python3 tools/generate_audio.py` 生成音频；再跑 `python3 tools/validate.py` 检查词库、音频、`audio/manifest.json`、`packs` 和图标是否一致（CI 也会跑）。没有音频时会退回浏览器 TTS，但 iPad 上音色不如 edge-tts 稳定。
 - 一次不要加太多。现在 101 个词已经不少；新词以每轮 3 个的速度进入，真正稳定掌握 6–12 个之后再考虑扩主题。
 
 ---
@@ -318,9 +319,9 @@ python3 -m pip install edge-tts
 - 错误路径：第一次错 → 卡片变暗；第二次错 → 目标卡发光；再点对 → 正常进入下一题；
 - 暂停/继续、长按设置、刷新后进度保留；
 - `file://` 直接打开可正常开始；
-- 727 条音频全部生成并通过存在性检查，实际播放请求均返回 200，控制台无报错；
+- 727 条音频全部生成并通过 `python3 tools/validate.py` 检查；播放请求可能返回 206，但离线缓存里保存的是完整 200，控制台无报错；
 - 语速 0.8× / 1.0× / 1.2× 切换后，实际播放速率与设置一致；
-- PWA：Service Worker 注册并控制页面、离线重新打开首页、727 段音频离线缓存、iOS「安装 App」提示；
+- PWA：Service Worker 注册并控制页面、离线重新打开首页、727 段音频离线缓存、iOS「安装 App」提示；shell 与 audio 缓存分离，`VERSION` 升级后已下载音频保留，旧 `momo-static-*` 缓存会自动迁移；
 - 第二轮验证：仍是 8 个不同词，其中 3 个新词、5 个到期复习；
 - 第一轮验证：5 个兴趣词（Elsa、雪花、冰、魔法棒、城堡）全部进入首轮；
 - 词性筛选：选「动词」后本轮 8 个词全部是动词；选「位置词」后本轮 6 个词，全部带自绘方位图；

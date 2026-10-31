@@ -3584,9 +3584,6 @@
   PACKS.forEach(function (p) { PACK_BY_ID[p.id] = p; });
   var INTERVALS = [1, 2, 4, 8, 16];
   var KEY = 'momo-word-basket.v1';
-  // Keep this in sync with VERSION in sw.js. The offline-audio button writes
-  // into the same cache the service worker reads from.
-  var PWA_CACHE = 'momo-static-v3';
   var COLORS = ['#FF8A6B', '#FFCE6B', '#8FD3B6', '#86C5EA', '#E97A9A', '#B79CED', '#F4A261'];
 
   var CONFUSE = {
@@ -4078,8 +4075,12 @@
 
   function dueWords() {
     var no = progress.sessions + 1;
+    // A round only reviews the language(s) it is playing. Counting both
+    // languages here made the home badge and review button disagree with
+    // buildSession() in single-language mode.
+    var langs = settings.mode === 'both' ? LANGS : [settings.mode];
     return WORDS.filter(function (w) {
-      return LANGS.some(function (l) {
+      return langs.some(function (l) {
         var r = getRec(w.id)[l];
         return r.seen && r.due <= no;
       });
@@ -4649,20 +4650,22 @@
     var intro = kind === 'check'
       ? say(firstLang + '/check', CHECK[firstLang], firstLang)
       : say(firstLang + '/intro', INTRO[firstLang], firstLang);
-    // Never let a short/stalled intro clip lock the board: fall back quickly.
-    var unlockTimer = setTimeout(function () {
-      if (state.session === s && !s.answered && s.locked) {
-        s.locked = false;
-        playPrompt();
-      }
-    }, 1200);
-    intro.then(function () {
+    // The check intro is ~2.6–3.3s, so a 1.2s fallback used to cut it off and
+    // then start the first prompt twice. Give the clip room to finish and make
+    // sure only one of the two paths can unlock the board.
+    var introDone = false;
+    function beginPrompt() {
+      if (introDone) return;
+      introDone = true;
       clearTimeout(unlockTimer);
       if (state.session === s && !s.answered) {
         s.locked = false;
         playPrompt();
       }
-    });
+    }
+    // Safety net for a stalled media element; playAudio() also has its own cap.
+    var unlockTimer = setTimeout(beginPrompt, 6000);
+    intro.then(beginPrompt);
     setTimeout(function () { state.starting = false; }, 500);
   }
 
@@ -4837,15 +4840,19 @@
         : '<span class="miss all">全部答对，太棒了！</span>';
       report.hidden = false;
       $('#end-basket').innerHTML = '';
-      progress.checks[s.packId] = {
-        at: Date.now(),
-        total: total,
-        answered: answered,
-        correct: correctCount,
-        missed: missed,
-        aborted: aborted
-      };
-      save();
+      // A check that was opened and abandoned before the first answer should
+      // not erase the last real result with a 0/0 "aborted" entry.
+      if (answered > 0) {
+        progress.checks[s.packId] = {
+          at: Date.now(),
+          total: total,
+          answered: answered,
+          correct: correctCount,
+          missed: missed,
+          aborted: aborted
+        };
+        save();
+      }
     } else {
       report.hidden = true;
       var basket = [];
@@ -4859,9 +4866,11 @@
 
     $('#screen-end').classList.toggle('check', isCheck);
     $('#end-sub').textContent = isCheck
-      ? (aborted
-          ? '这次先到这里，已经答过的词都记在下面'
-          : (correctCount === total ? '每个词都认出来了，太棒了！' : '没答对的词都留在下面，下次陪她再看一遍'))
+      ? (answered === 0
+          ? '这次还没有答题，之前的检查结果会保留'
+          : (aborted
+              ? '这次先到这里，已经答过的词都记在下面'
+              : (correctCount === total ? '每个词都认出来了，太棒了！' : '没答对的词都留在下面，下次陪她再看一遍')))
       : (s.kind === 'review' ? '这次复习的词都收好啦' : 'Momo 把星星都收进小篮子里啦');
     $('#btn-again-label').textContent = isCheck ? '再检查一次' : (s.kind === 'review' ? '再复习一次' : '再玩一次');
     showScreen('end');
@@ -5017,6 +5026,35 @@
     $('#check-intro').classList.add('open');
   }
 
+  function getAudioCacheName() {
+    return new Promise(function (resolve) {
+      if (!('serviceWorker' in navigator) || !window.MessageChannel) { resolve(null); return; }
+      var settled = false;
+      var timer = setTimeout(function () { finish(null); }, 2500);
+      function finish(name) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(name);
+      }
+      navigator.serviceWorker.ready.then(function (reg) {
+        var worker = reg.active || navigator.serviceWorker.controller;
+        if (!worker) { finish(null); return; }
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function (event) {
+          var data = event.data || {};
+          finish(data.audioCache || null);
+        };
+        worker.postMessage({ type: 'GET_CACHES' }, [channel.port2]);
+      }).catch(function () { finish(null); });
+    });
+  }
+
+  function fetchWithTimeout(url, ms) {
+    if (!window.AbortSignal || typeof AbortSignal.timeout !== 'function') return fetch(url);
+    return fetch(url, { signal: AbortSignal.timeout(ms) });
+  }
+
   async function cacheAllAudio() {
     var btn = $('#btn-offline');
     var status = $('#offline-status');
@@ -5027,9 +5065,21 @@
     if (btn.disabled) return;
     btn.disabled = true;
     btn.textContent = '正在缓存…';
+
+    // The service worker owns cache names; asking it avoids the old bug where
+    // index.html and sw.js each had a hard-coded copy that could drift apart.
+    var cacheName = await getAudioCacheName();
+    if (!cacheName) {
+      status.textContent = '离线缓存需要 HTTPS 或 localhost，并等应用加载完成；刷新后再试。';
+      btn.disabled = false;
+      btn.textContent = '下载离线音频（约 14 MB）';
+      return;
+    }
+
     try {
-      var list = await fetch('audio/manifest.json', { cache: 'no-store' }).then(function (r) { return r.json(); });
-      var cache = await caches.open(PWA_CACHE);
+      var list = await fetchWithTimeout('audio/manifest.json', 15000).then(function (r) { return r.json(); });
+      if (!Array.isArray(list)) throw new Error('bad audio manifest');
+      var cache = await caches.open(cacheName);
       var done = 0;
       var failed = 0;
       var cursor = 0;
@@ -5041,9 +5091,13 @@
           var url = new URL(path, location.href).href;
           try {
             var hit = await cache.match(url);
+            if (hit && hit.status !== 200) {
+              await cache.delete(url);
+              hit = null;
+            }
             if (!hit) {
-              var res = await fetch(url);
-              if (!res.ok) throw new Error('HTTP ' + res.status);
+              var res = await fetchWithTimeout(url, 20000);
+              if (res.status !== 200) throw new Error('HTTP ' + res.status);
               await cache.put(url, res);
             }
             done++;
