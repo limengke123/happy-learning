@@ -91,6 +91,8 @@ def check_word(word: object, seen_ids: set[str]) -> str | None:
         if not isinstance(prompts, list) or not prompts:
             error(f"{word_id}.{lang}: prompts must be a non-empty list")
         else:
+            if len(prompts) < 3:
+                error(f"{word_id}.{lang}: needs at least 3 prompts for the three levels")
             for index, prompt in enumerate(prompts):
                 if not isinstance(prompt, str) or not prompt.strip():
                     error(f"{word_id}.{lang}: prompt {index + 1} is empty")
