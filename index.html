@@ -529,6 +529,7 @@
   }
   .end-basket:empty { display: none; }
   .end-basket span { font-size: 30px; line-height: 1; filter: drop-shadow(0 3px 3px rgba(120, 80, 40, .18)); }
+  .end-basket span img { width: 30px; height: 30px; object-fit: contain; display: block; }
   .ghost {
     padding: 9px 20px;
     border-radius: 999px;
@@ -647,6 +648,7 @@
   .pgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px 10px; margin-top: 10px; }
   .pcell { display: flex; align-items: center; gap: 7px; padding: 4px 5px; border-radius: 9px; background: #fdf6ea; }
   .pemoji { font-size: 18px; width: 22px; text-align: center; }
+  .pemoji img { width: 22px; height: 22px; object-fit: contain; display: block; margin: 0 auto; }
   .pname { flex: 0 1 76px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 700; color: #7a5e45; }
   .pbars { display: flex; flex-direction: column; gap: 3px; flex: 1; }
   .pbar { display: flex; gap: 3px; }
@@ -654,6 +656,7 @@
   .pbar.en i.f { background: var(--sky); }
   .pbar.fr i.f { background: var(--rose); }
   .note { font-size: 10px; color: var(--muted); margin-top: 8px; line-height: 1.5; font-weight: 600; }
+  .note a { color: var(--accent); font-weight: 800; text-decoration: underline; }
   .level-preview {
     margin-top: 8px;
     padding: 8px 10px;
@@ -705,6 +708,8 @@
   /* ---------------- word-bank + monthly check ---------------- */
   .card .art.art-svg { width: 74%; height: 74%; display: grid; place-items: center; font-size: 0; }
   .card .art.art-svg svg { width: 100%; height: 100%; display: block; }
+  .card .art.art-img { width: 64%; height: 64%; font-size: 0; }
+  .card .art.art-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
   .check-count {
     padding: 4px 11px;
     border-radius: 999px;
@@ -762,6 +767,7 @@
     font-weight: 700;
   }
   .miss b { font-size: 14px; font-weight: 400; }
+  .miss b img { width: 18px; height: 18px; object-fit: contain; display: inline-block; vertical-align: -4px; }
   .miss.all { background: #e8f7ef; color: #2f6b4f; }
   .bank-summary { margin: 8px 0 0; font-size: 11px; font-weight: 700; color: var(--muted); }
   .bank-filter { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 2px; }
@@ -3452,6 +3458,7 @@
         <button data-len="8">8 次</button>
         <button data-len="10">10 次</button>
       </div>
+      <p class="note">通常每轮 4 个新词；上一轮刚出现过的词不会紧接着再出现，复习词至少隔一轮。</p>
     </div>
     <div class="set-block">
       <label>英语难度</label>
@@ -3535,6 +3542,7 @@
     </div>
     <button class="btn-danger" id="btn-reset">清空学习记录</button>
     <p class="note">进度只保存在本机浏览器，不会上传。清空后无法恢复。</p>
+    <p class="note">部分图片卡来自 <a href="https://arasaac.org" target="_blank" rel="noopener">ARASAAC</a>（作者 Sergio Palao，Gobierno de Aragón），CC BY-NC-SA 4.0。</p>
   </div>
 </div>
 
@@ -3647,39 +3655,10 @@
 
   document.querySelectorAll('[data-momo]').forEach(function (el) { el.innerHTML = MOMO; });
 
-  /* Hand-drawn SVG art for words emoji cannot tell apart (clothes, verbs,
-     adjectives and spatial relations). Keyed by word id; words without an
-     entry fall back to their emoji. */
+  /* Hand-drawn SVG art for comparisons that need a controlled layout
+     (positions, shapes, dirty/clean). Keyed by word id. Rendering order is
+     FLASHCARDS -> ART -> the word's emoji. */
   var ART = {
-    skirt:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<ellipse cx="50" cy="86" rx="28" ry="4" fill="#5B4636" opacity=".10"/>' +
-        '<path d="M35 30 H65 L80 78 Q50 87 20 78 Z" fill="#E97A9A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M35 30 H65 L67 41 H33 Z" fill="#C95E7C" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M40 48 L36 72 M50 48 V76 M60 48 L64 72" stroke="#FFF3DF" stroke-width="2.6" stroke-linecap="round" opacity=".65"/>' +
-        '<circle cx="50" cy="36" r="2.2" fill="#FFCE6B"/>' +
-      '</svg>',
-
-    dress:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<ellipse cx="50" cy="86" rx="28" ry="4" fill="#5B4636" opacity=".10"/>' +
-        '<path d="M38 24 L44 30 H56 L62 24 L71 33 L66 44 L74 78 Q50 89 26 78 L34 44 L29 33 Z" fill="#B79CED" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M38 24 Q50 35 62 24" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
-        '<path d="M40 45 H60" stroke="#FFF3DF" stroke-width="2.5" opacity=".55" stroke-linecap="round"/>' +
-        '<circle cx="50" cy="53" r="2.2" fill="#FFCE6B"/>' +
-        '<circle cx="50" cy="61" r="2.2" fill="#FFCE6B"/>' +
-        '<path d="M42 68 L38 78 M58 68 L62 78" stroke="#FFF3DF" stroke-width="2.6" stroke-linecap="round" opacity=".55"/>' +
-      '</svg>',
-
-    belt:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<path d="M10 41 Q50 32 90 41 L88 59 Q50 50 12 59 Z" fill="#8B5E3C" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<rect x="39" y="33" width="22" height="32" rx="5" fill="#FFCE6B" stroke="#5B4636" stroke-width="3"/>' +
-        '<rect x="45" y="40" width="10" height="18" rx="2.5" fill="#FFF3DF" stroke="#5B4636" stroke-width="2"/>' +
-        '<circle cx="23" cy="47" r="2.4" fill="#FFF3DF"/><circle cx="31" cy="47" r="2.4" fill="#FFF3DF"/>' +
-        '<circle cx="70" cy="49" r="2.4" fill="#5B4636" opacity=".55"/><circle cx="78" cy="49" r="2.4" fill="#5B4636" opacity=".55"/>' +
-      '</svg>',
-
     rectangle:
       '<svg viewBox="0 0 100 100" aria-hidden="true">' +
         '<rect x="12" y="28" width="76" height="44" rx="9" fill="#86C5EA" stroke="#5B4636" stroke-width="3"/>' +
@@ -3714,201 +3693,6 @@
         '<path d="M78 62 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFCE6B"/>' +
         '<path d="M62 20 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6 Z" fill="#86C5EA"/>' +
         '<path d="M72 38 q6 0 6 6 q0 6 -6 6 q-6 0 -6 -6 q0 -6 6 -6" fill="#EAF7FF" stroke="#5B4636" stroke-width="2" opacity=".8"/>' +
-      '</svg>',
-
-    sky:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<rect x="8" y="10" width="84" height="78" rx="20" fill="#BFE3FA" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M8 66 Q50 54 92 66 V68 Q92 88 70 88 H30 Q8 88 8 68 Z" fill="#DDF1FE"/>' +
-        '<circle cx="68" cy="32" r="11" fill="#FFCE6B"/>' +
-        '<path d="M58 28 a6 6 0 0 0 0 12" fill="none" stroke="#FFE9A8" stroke-width="2.4" stroke-linecap="round"/>' +
-        '<path d="M30 42 q0 -8 8 -8 q3 -6 9 -3 q6 -2 8 5 q7 1 6 8 H30 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="2.4"/>' +
-        '<path d="M28 58 q5 -5 10 0 M62 62 q5 -5 10 0" fill="none" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>' +
-      '</svg>',
-
-    yogurt:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<ellipse cx="50" cy="88" rx="24" ry="4" fill="#5B4636" opacity=".10"/>' +
-        '<path d="M74 20 L83 29 L62 50" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
-        '<ellipse cx="60" cy="51" rx="4.5" ry="6" fill="#EFC182" stroke="#5B4636" stroke-width="2.2" transform="rotate(38 60 51)"/>' +
-        '<path d="M32 32 H68 L64 82 Q50 88 36 82 Z" fill="#FFFDF8" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<rect x="27" y="24" width="46" height="10" rx="5" fill="#E97A9A" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M38 48 H62" stroke="#86C5EA" stroke-width="7" stroke-linecap="round"/>' +
-        '<circle cx="50" cy="64" r="4.5" fill="#E97A9A"/>' +
-        '<path d="M38 74 H62" stroke="#E97A9A" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>' +
-      '</svg>',
-
-    cashews:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<g transform="translate(38 36) rotate(-12)">' +
-          '<path d="M0 -14 C-12 -4 -8 12 6 15 C20 18 28 6 23 -6 C19 -15 8 -19 0 -14 Z" fill="#F0C98F" stroke="#5B4636" stroke-width="3"/>' +
-          '<path d="M2 -6 C-4 0 -2 8 6 10" fill="none" stroke="#C99A5B" stroke-width="2.2" stroke-linecap="round"/>' +
-        '</g>' +
-        '<g transform="translate(62 58) rotate(18)">' +
-          '<path d="M0 -13 C-11 -4 -7 11 6 14 C19 17 26 5 21 -6 C17 -14 7 -18 0 -13 Z" fill="#F6D7A6" stroke="#5B4636" stroke-width="3"/>' +
-          '<path d="M2 -5 C-3 0 -1 8 6 9" fill="none" stroke="#C99A5B" stroke-width="2.2" stroke-linecap="round"/>' +
-        '</g>' +
-        '<g transform="translate(28 66) rotate(32)">' +
-          '<path d="M0 -11 C-9 -3 -6 10 5 12 C16 14 22 4 18 -5 C15 -12 6 -15 0 -11 Z" fill="#E8B36A" stroke="#5B4636" stroke-width="2.6"/>' +
-        '</g>' +
-      '</svg>',
-
-    snack:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<ellipse cx="50" cy="78" rx="36" ry="9" fill="#FFFDF8" stroke="#5B4636" stroke-width="3"/>' +
-        '<circle cx="36" cy="62" r="13" fill="#E8B36A" stroke="#5B4636" stroke-width="3"/>' +
-        '<circle cx="31" cy="58" r="2" fill="#7A4B2A"/><circle cx="40" cy="60" r="2" fill="#7A4B2A"/><circle cx="34" cy="67" r="2" fill="#7A4B2A"/>' +
-        '<circle cx="61" cy="64" r="10" fill="#E97A9A" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M61 54 q1 -6 7 -7" fill="none" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round"/>' +
-        '<path d="M68 47 q5 -1 6 4 q-5 2 -6 -4" fill="#8FD3B6" stroke="#5B4636" stroke-width="2"/>' +
-        '<rect x="75" y="40" width="13" height="22" rx="3" fill="#FFCE6B" stroke="#5B4636" stroke-width="2.6"/>' +
-        '<path d="M81 40 V26" stroke="#E97A9A" stroke-width="2.6" stroke-linecap="round"/>' +
-        '<path d="M24 80 H76" stroke="#D8C2A8" stroke-width="2.4" stroke-linecap="round"/>' +
-      '</svg>',
-
-    papers:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<g transform="rotate(-10 50 50)"><rect x="26" y="18" width="44" height="60" rx="5" fill="#F4E7D2" stroke="#5B4636" stroke-width="3"/></g>' +
-        '<g transform="rotate(6 50 50)"><rect x="30" y="16" width="44" height="60" rx="5" fill="#FFFDF8" stroke="#5B4636" stroke-width="3"/></g>' +
-        '<rect x="32" y="14" width="44" height="60" rx="5" fill="#FFFDF8" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M40 28 H68 M40 37 H68 M40 46 H62 M40 55 H66" stroke="#86C5EA" stroke-width="3" stroke-linecap="round"/>' +
-        '<path d="M38 20 q-6 3 -4 9 q2 5 7 2" fill="none" stroke="#E97A9A" stroke-width="2.6" stroke-linecap="round"/>' +
-      '</svg>',
-
-    share:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<path d="M36 14 C24 16 16 26 16 36 C16 47 25 56 36 56 L40 48 L35 40 L40 32 L35 24 Z" fill="#E8B36A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M64 14 C76 16 84 26 84 36 C84 47 75 56 64 56 L60 48 L65 40 L60 32 L65 24 Z" fill="#E8B36A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<circle cx="28" cy="30" r="2.2" fill="#7A4B2A"/><circle cx="32" cy="43" r="2.2" fill="#7A4B2A"/>' +
-        '<circle cx="72" cy="30" r="2.2" fill="#7A4B2A"/><circle cx="68" cy="43" r="2.2" fill="#7A4B2A"/>' +
-        '<path d="M10 92 Q12 74 24 68" fill="none" stroke="#F4C99B" stroke-width="10" stroke-linecap="round"/>' +
-        '<path d="M90 92 Q88 74 76 68" fill="none" stroke="#F4C99B" stroke-width="10" stroke-linecap="round"/>' +
-        '<circle cx="26" cy="66" r="7" fill="#F4C99B" stroke="#5B4636" stroke-width="2.6"/>' +
-        '<circle cx="74" cy="66" r="7" fill="#F4C99B" stroke="#5B4636" stroke-width="2.6"/>' +
-        '<circle cx="50" cy="50" r="2.2" fill="#E8B36A"/><circle cx="46" cy="60" r="1.6" fill="#E8B36A"/><circle cx="55" cy="58" r="1.8" fill="#E8B36A"/>' +
-        '<path d="M50 64 q-3 -5 0 -8 q3 3 0 8" fill="#E97A9A"/>' +
-      '</svg>',
-
-    fall:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<path d="M10 86 H90" stroke="#D8C2A8" stroke-width="4" stroke-linecap="round"/>' +
-        '<circle cx="70" cy="66" r="11" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M62 60 L44 48" stroke="#86C5EA" stroke-width="12" stroke-linecap="round"/>' +
-        '<path d="M50 52 L36 38 L28 30" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
-        '<path d="M46 49 L34 58" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
-        '<path d="M46 48 L40 28" fill="none" stroke="#E97A9A" stroke-width="8" stroke-linecap="round"/>' +
-        '<path d="M44 47 L54 24" fill="none" stroke="#E97A9A" stroke-width="8" stroke-linecap="round"/>' +
-        '<path d="M22 62 H38 M16 72 H32" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round" opacity=".45"/>' +
-        '<path d="M84 30 l2.4 6.6 6.6 2.4 -6.6 2.4 -2.4 6.6 -2.4 -6.6 -6.6 -2.4 6.6 -2.4 Z" fill="#FFCE6B"/>' +
-        '<path d="M56 18 l1.8 5 5 1.8 -5 1.8 -1.8 5 -1.8 -5 -5 -1.8 5 -1.8 Z" fill="#FFCE6B"/>' +
-      '</svg>',
-
-    get_dressed:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<ellipse cx="50" cy="88" rx="24" ry="4" fill="#5B4636" opacity=".10"/>' +
-        '<circle cx="50" cy="26" r="11" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M37 42 Q50 34 63 42 L65 62 H35 Z" fill="#86C5EA" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M38 62 H62 L60 82 H52 L50 70 L48 82 H40 Z" fill="#E97A9A" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M34 46 L22 58 M66 46 L78 58" fill="none" stroke="#F4C99B" stroke-width="7" stroke-linecap="round"/>' +
-        '<path d="M44 84 H40 M56 84 H60" stroke="#5B4636" stroke-width="5" stroke-linecap="round"/>' +
-        '<circle cx="46" cy="25" r="1.6" fill="#4A3226"/><circle cx="54" cy="25" r="1.6" fill="#4A3226"/>' +
-        '<path d="M46 30 q4 3 8 0" fill="none" stroke="#4A3226" stroke-width="2" stroke-linecap="round"/>' +
-      '</svg>',
-
-    prepare:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<ellipse cx="50" cy="88" rx="28" ry="4" fill="#5B4636" opacity=".10"/>' +
-        '<path d="M20 52 H80 Q75 85 50 87 Q25 85 20 52 Z" fill="#86C5EA" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M24 54 H76 Q72 64 50 65 Q28 64 24 54 Z" fill="#FFCE6B" stroke="#5B4636" stroke-width="2.4"/>' +
-        '<path d="M58 53 L72 24" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
-        '<path d="M72 24 q-7 -4 -10 4 q-3 8 5 9 q8 1 9 -6" fill="none" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round"/>' +
-        '<ellipse cx="27" cy="36" rx="8" ry="11" fill="#FFFDF8" stroke="#5B4636" stroke-width="2.6" transform="rotate(-16 27 36)"/>' +
-        '<circle cx="28" cy="38" r="4" fill="#FFCE6B"/>' +
-      '</svg>',
-
-    push:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<path d="M8 86 H92" stroke="#D8C2A8" stroke-width="3" stroke-linecap="round"/>' +
-        '<rect x="48" y="34" width="40" height="48" rx="5" fill="#EFC182" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M48 46 H88 M48 58 H88" stroke="#5B4636" stroke-width="2" opacity=".3"/>' +
-        '<path d="M8 64 Q22 58 36 61 L45 63" fill="none" stroke="#F4C99B" stroke-width="12" stroke-linecap="round"/>' +
-        '<circle cx="46" cy="63" r="7" fill="#F4C99B" stroke="#5B4636" stroke-width="2.6"/>' +
-        '<path d="M6 48 H18 M2 58 H14 M8 78 H20" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round" opacity=".4"/>' +
-      '</svg>',
-
-    catch:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<circle cx="50" cy="16" r="9" fill="#FF8A6B" stroke="#5B4636" stroke-width="3"/>' +
-        '<circle cx="46" cy="12" r="2.2" fill="#FFF3DF"/>' +
-        '<circle cx="50" cy="58" r="11" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
-        '<circle cx="46" cy="56" r="1.7" fill="#4A3226"/><circle cx="54" cy="56" r="1.7" fill="#4A3226"/>' +
-        '<path d="M46 62 q4 3 8 0" fill="none" stroke="#4A3226" stroke-width="2" stroke-linecap="round"/>' +
-        '<path d="M50 69 V82" stroke="#86C5EA" stroke-width="12" stroke-linecap="round"/>' +
-        '<path d="M44 66 L34 40 M56 66 L66 40" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
-        '<circle cx="34" cy="38" r="5.5" fill="#F4C99B" stroke="#5B4636" stroke-width="2.4"/>' +
-        '<circle cx="66" cy="38" r="5.5" fill="#F4C99B" stroke="#5B4636" stroke-width="2.4"/>' +
-        '<path d="M46 82 L40 90 M54 82 L60 90" stroke="#E97A9A" stroke-width="7" stroke-linecap="round"/>' +
-        '<path d="M24 22 l-5 -5 M76 22 l5 -5 M50 2 v-5" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round" opacity=".4"/>' +
-      '</svg>',
-
-    blow:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<circle cx="34" cy="48" r="20" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M22 36 q6 -7 14 -5" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
-        '<path d="M30 44 q4 3 8 0" fill="none" stroke="#4A3226" stroke-width="2.4" stroke-linecap="round"/>' +
-        '<path d="M52 44 q6 -2 8 4 q-4 4 -8 2 Z" fill="#E97A9A" stroke="#5B4636" stroke-width="2.2"/>' +
-        '<path d="M60 46 q8 -6 16 -2 M62 52 q8 -2 14 2" fill="none" stroke="#86C5EA" stroke-width="3" stroke-linecap="round"/>' +
-        '<rect x="80" y="40" width="9" height="34" rx="4" fill="#86C5EA" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M84.5 40 Q78 32 84.5 24 Q91 32 84.5 40 Z" fill="#FFCE6B" stroke="#5B4636" stroke-width="2.4"/>' +
-        '<path d="M84.5 40 Q88 34 84.5 28" fill="none" stroke="#FF8A6B" stroke-width="1.8" stroke-linecap="round"/>' +
-      '</svg>',
-
-    put_on:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<circle cx="48" cy="68" r="17" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
-        '<circle cx="42" cy="66" r="1.8" fill="#4A3226"/><circle cx="54" cy="66" r="1.8" fill="#4A3226"/>' +
-        '<path d="M43 73 q5 4 10 0" fill="none" stroke="#4A3226" stroke-width="2.2" stroke-linecap="round"/>' +
-        '<path d="M28 48 Q48 26 68 48 Z" fill="#8FD3B6" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M23 49 H73" stroke="#5B4636" stroke-width="6" stroke-linecap="round"/>' +
-        '<path d="M84 20 V44 M78 38 L84 44 L90 38" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '</svg>',
-
-    take_off:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<circle cx="44" cy="70" r="17" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
-        '<circle cx="38" cy="68" r="1.8" fill="#4A3226"/><circle cx="50" cy="68" r="1.8" fill="#4A3226"/>' +
-        '<path d="M39 75 q5 4 10 0" fill="none" stroke="#4A3226" stroke-width="2.2" stroke-linecap="round"/>' +
-        '<g transform="rotate(18 62 32)">' +
-          '<path d="M44 36 Q62 16 80 36 Z" fill="#8FD3B6" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-          '<path d="M40 37 H84" stroke="#5B4636" stroke-width="6" stroke-linecap="round"/>' +
-        '</g>' +
-        '<path d="M16 46 V22 M10 28 L16 22 L22 28" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<path d="M62 56 q6 -2 10 2" fill="none" stroke="#5B4636" stroke-width="2.2" stroke-linecap="round" opacity=".45"/>' +
-      '</svg>',
-
-    move:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<path d="M8 86 H92" stroke="#D8C2A8" stroke-width="3" stroke-linecap="round"/>' +
-        '<circle cx="62" cy="24" r="10" fill="#F4C99B" stroke="#5B4636" stroke-width="3"/>' +
-        '<path d="M58 34 L46 52" stroke="#86C5EA" stroke-width="12" stroke-linecap="round"/>' +
-        '<path d="M52 44 L66 36 M50 48 L36 42" fill="none" stroke="#F4C99B" stroke-width="6" stroke-linecap="round"/>' +
-        '<path d="M46 54 L32 64 L20 64 M47 54 L60 66 L72 64" fill="none" stroke="#F4C99B" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<path d="M14 34 H30 M6 46 H22 M10 58 H24" stroke="#5B4636" stroke-width="2.6" stroke-linecap="round" opacity=".4"/>' +
-        '<path d="M72 18 q5 2 6 7" fill="none" stroke="#5B4636" stroke-width="2.4" stroke-linecap="round" opacity=".45"/>' +
-      '</svg>',
-
-    donkey:
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-        '<ellipse cx="50" cy="86" rx="30" ry="4" fill="#5B4636" opacity=".10"/>' +
-        '<path d="M18 64 Q16 48 30 44 L52 44 Q62 44 64 56 L64 76 H54 L52 62 H34 L32 76 H22 Z" fill="#B8AFA5" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M52 46 Q54 34 64 32 L74 34 L78 44 L74 54 Q66 58 58 54 Z" fill="#C9C0B6" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M60 33 L55 13 L67 31 Z" fill="#B8AFA5" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M72 33 L78 13 L81 35 Z" fill="#B8AFA5" stroke="#5B4636" stroke-width="3" stroke-linejoin="round"/>' +
-        '<ellipse cx="77" cy="46" rx="8" ry="6" fill="#E6DED4" stroke="#5B4636" stroke-width="2.6"/>' +
-        '<circle cx="66" cy="40" r="2" fill="#4A3226"/><circle cx="81" cy="46" r="1.4" fill="#4A3226"/>' +
-        '<path d="M26 76 V86 M42 76 V86 M54 76 V86 M62 76 V86" stroke="#5B4636" stroke-width="5" stroke-linecap="round"/>' +
-        '<path d="M18 58 Q10 62 12 72" fill="none" stroke="#5B4636" stroke-width="3" stroke-linecap="round"/>' +
-        '<path d="M38 44 l2 -6 M46 44 l2 -6" stroke="#5B4636" stroke-width="2.2" stroke-linecap="round" opacity=".45"/>' +
       '</svg>',
 
     on:
@@ -3969,6 +3753,31 @@
       '</svg>'
   };
 
+  // Downloaded picture cards for concepts that are hard to read as an emoji.
+  // Source: ARASAAC (https://arasaac.org), author Sergio Palao, Gobierno de
+  // Aragón, CC BY-NC-SA 4.0. Files are cropped/scaled, not redrawn.
+  var FLASHCARDS = {
+    share: 'flashcards/share.png',
+    move: 'flashcards/move.png',
+    fall: 'flashcards/fall.png',
+    get_dressed: 'flashcards/get_dressed.png',
+    prepare: 'flashcards/prepare.png',
+    push: 'flashcards/push.png',
+    catch: 'flashcards/catch.png',
+    blow: 'flashcards/blow.png',
+    take_off: 'flashcards/take_off.png',
+    put_on: 'flashcards/put_on.png',
+    donkey: 'flashcards/donkey.png',
+    skirt: 'flashcards/skirt.png',
+    dress: 'flashcards/dress.png',
+    belt: 'flashcards/belt.png',
+    yogurt: 'flashcards/yogurt.png',
+    cashews: 'flashcards/cashews.png',
+    snack: 'flashcards/snack.png',
+    papers: 'flashcards/papers.png',
+    sky: 'flashcards/sky.png'
+  };
+
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -4009,6 +3818,14 @@
     p.sessions = Math.max(0, Number(p.sessions) || 0);
     p.stats = Object.assign({ trials: 0, firstTry: 0 }, p.stats || {});
     p.checks = p.checks || {};
+    // Concepts shown in the previous round. Kept as a separate list so a
+    // word never comes back in the very next round just because its due date
+    // says so; the due date is still honored one round later.
+    var recent = [];
+    (Array.isArray(p.recent) ? p.recent : []).forEach(function (id) {
+      if (BY_ID[id] && recent.indexOf(id) < 0) recent.push(id);
+    });
+    p.recent = recent.slice(0, 20);
     return p;
   }
 
@@ -4096,6 +3913,9 @@
   }
 
   function artFor(id) {
+    if (FLASHCARDS[id]) {
+      return '<img src="' + FLASHCARDS[id] + '" alt="" draggable="false" decoding="async">';
+    }
     return ART[id] || BY_ID[id].emoji;
   }
 
@@ -4334,11 +4154,22 @@
       return langs.some(function (l) { return getRec(w.id)[l].seen; });
     }).length;
 
-    // After the first session, reserve three slots for brand-new words so the
-    // word list keeps opening up while due reviews still take most slots.
-    // Review mode only ever draws words that are due.
-    var newCap = review ? 0 : (totalSeen === 0 ? len : Math.min(3, len));
+    // Half of a normal round is brand-new material (four of eight), so the
+    // bank keeps opening up instead of turning into an endless review deck.
+    // Review mode still only draws words that are due.
+    var newCap = review ? 0 : (totalSeen === 0 ? len : Math.min(4, len));
     var dueCap = review ? len : Math.max(0, len - newCap);
+
+    // A concept shown last round is held back one round when there are enough
+    // other concepts to fill the round. This kills the "same words again"
+    // feeling without switching off spaced repetition: its due date stays in
+    // the past and it comes back the round after next.
+    var recent = review ? [] : (progress.recent || []);
+    var recentSet = {};
+    recent.forEach(function (id) { recentSet[id] = true; });
+    var recentInPool = pool.filter(function (w) { return recentSet[w.id]; }).length;
+    var skipRecent = !review && pool.length - recentInPool >= len;
+    function blocked(id) { return skipRecent && recentSet[id]; }
 
     var concepts = pool.map(function (w) {
       var recs = langs.map(function (l) { return getRec(w.id)[l]; });
@@ -4351,7 +4182,7 @@
       };
     });
 
-    var dueOnes = concepts.filter(function (c) { return c.dueAny; }).sort(function (a, b) {
+    var dueOnes = concepts.filter(function (c) { return c.dueAny && !blocked(c.id); }).sort(function (a, b) {
       return a.minLvl - b.minLvl || a.dueMin - b.dueMin || Math.random() - 0.5;
     });
     if (review && !dueOnes.length) return null;
@@ -4359,7 +4190,14 @@
     newOnes.sort(function (a, b) {
       return (INTEREST[b.id] ? 1 : 0) - (INTEREST[a.id] ? 1 : 0);
     });
-    var rest = shuffle(concepts.filter(function (c) { return c.seenAny && !c.dueAny; }));
+    var rest = shuffle(concepts.filter(function (c) {
+      return c.seenAny && !c.dueAny && !blocked(c.id);
+    }));
+    var heldDue = skipRecent ? concepts.filter(function (c) {
+      return c.dueAny && recentSet[c.id];
+    }).sort(function (a, b) {
+      return a.minLvl - b.minLvl || a.dueMin - b.dueMin || Math.random() - 0.5;
+    }) : [];
 
     // Exactly one entry per concept: no word repeats inside a round.
     var picked = [];
@@ -4372,8 +4210,16 @@
         if (picked.length >= len || added >= newCap) return;
         picked.push(c); added++;
       });
-      rest.forEach(function (c) { if (picked.length < len) picked.push(c); });
+      // If there are fewer due reviews than the round can hold, open more new
+      // words instead of recycling old ones.
       newOnes.forEach(function (c) {
+        if (picked.length < len && picked.indexOf(c) < 0) picked.push(c);
+      });
+      rest.forEach(function (c) { if (picked.length < len) picked.push(c); });
+      // Tiny pools (positions, adjectives) may not have enough non-recent
+      // concepts; only then do last round's due words come back.
+      heldDue.forEach(function (c) { if (picked.length < len) picked.push(c); });
+      concepts.forEach(function (c) {
         if (picked.length < len && picked.indexOf(c) < 0) picked.push(c);
       });
     }
@@ -4418,6 +4264,7 @@
     var breakAt = Math.floor(queue.length / 2);
     if (queue.length < 4 || breakAt >= queue.length) breakAt = 0;
 
+    progress.recent = picked.map(function (c) { return c.id; });
     progress.sessions = no;
     save();
 
@@ -4562,9 +4409,9 @@
 
     var cards = $('#cards');
     cards.innerHTML = s.cardIds.map(function (id, i) {
-      var isArt = !!ART[id];
+      var kind = FLASHCARDS[id] ? ' art-img' : (ART[id] ? ' art-svg' : '');
       return '<button class="card" data-id="' + id + '" style="--d:' + (i * 70) + 'ms" aria-label="图片选项 ' + (i + 1) + '">' +
-        '<span class="art' + (isArt ? ' art-svg' : '') + '">' + artFor(id) + '</span></button>';
+        '<span class="art' + kind + '">' + artFor(id) + '</span></button>';
     }).join('');
 
     requestAnimationFrame(function () {
@@ -4835,7 +4682,8 @@
       $('#report-missed').innerHTML = missed.length
         ? missed.map(function (id) {
             var w = BY_ID[id];
-            return '<span class="miss"><b>' + w.emoji + '</b>' + w.fr.phrase + '</span>';
+            var pic = FLASHCARDS[id] ? '<img src="' + FLASHCARDS[id] + '" alt="">' : w.emoji;
+            return '<span class="miss"><b>' + pic + '</b>' + w.fr.phrase + '</span>';
           }).join('')
         : '<span class="miss all">全部答对，太棒了！</span>';
       report.hidden = false;
@@ -4860,7 +4708,8 @@
         if (basket.indexOf(q.id) < 0) basket.push(q.id);
       });
       $('#end-basket').innerHTML = basket.map(function (id) {
-        return '<span title="' + BY_ID[id].en.phrase + ' / ' + BY_ID[id].fr.phrase + '">' + BY_ID[id].emoji + '</span>';
+        var pic = FLASHCARDS[id] ? '<img src="' + FLASHCARDS[id] + '" alt="">' : BY_ID[id].emoji;
+        return '<span title="' + BY_ID[id].en.phrase + ' / ' + BY_ID[id].fr.phrase + '">' + pic + '</span>';
       }).join('');
     }
 
@@ -4935,7 +4784,7 @@
         list.map(function (w) {
           var r = getRec(w.id);
           return '<div class="pcell" title="' + w.fr.phrase + ' / ' + w.en.phrase + '">' +
-            '<span class="pemoji">' + w.emoji + '</span>' +
+            '<span class="pemoji">' + (FLASHCARDS[w.id] ? '<img src="' + FLASHCARDS[w.id] + '" alt="" loading="lazy">' : w.emoji) + '</span>' +
             '<span class="pname">' + w.fr.phrase + '</span>' +
             '<div class="pbars"><div class="pbar en">' + bar(r.en.lvl) + '</div><div class="pbar fr">' + bar(r.fr.lvl) + '</div></div>' +
             '</div>';

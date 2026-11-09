@@ -240,15 +240,61 @@ def check_audio(words: list, actions: list) -> None:
         error(f"manifest references missing file: {path}")
 
 
-def check_art_keys(text: str, word_ids: set[str]) -> None:
+def check_art_keys(text: str, word_ids: set[str]) -> set[str]:
     match = re.search(r"var ART = \{(.*?)\n  \};", text, re.S)
     if not match:
         warn("could not find the ART block in index.html; skipping art check")
-        return
+        return set()
     art_ids = set(re.findall(r"^    ([a-z0-9_]+):\s*$", match.group(1), re.M))
     for art_id in sorted(art_ids - word_ids):
         error(f"ART has an entry for unknown word id {art_id!r}")
     print(f"  SVG art: {len(art_ids)} words")
+    return art_ids
+
+
+def check_flashcards(text: str, word_ids: set[str], art_ids: set[str]) -> None:
+    match = re.search(r"var FLASHCARDS = \{(.*?)\n  \};", text, re.S)
+    if not match:
+        error("index.html: cannot find the FLASHCARDS block")
+        return
+    entries = re.findall(r"^    ([a-z0-9_]+):\s*'([^']+)'", match.group(1), re.M)
+    seen: set[str] = set()
+    for word_id, src in entries:
+        if word_id not in word_ids:
+            error(f"FLASHCARDS has an entry for unknown word id {word_id!r}")
+        if word_id in seen:
+            error(f"FLASHCARDS has a duplicate entry for {word_id!r}")
+        seen.add(word_id)
+        if word_id in art_ids:
+            error(f"{word_id} is in both ART and FLASHCARDS")
+        if not src.startswith("flashcards/"):
+            error(f"{word_id}: flashcard path must live under flashcards/, got {src!r}")
+        path = ROOT / src
+        if not path.exists():
+            error(f"{word_id}: missing flashcard image {src}")
+        elif path.stat().st_size <= 1000:
+            error(f"{word_id}: flashcard image is suspiciously small: {src}")
+
+    folder = ROOT / "flashcards"
+    if folder.exists():
+        for path in sorted(folder.glob("*.png")):
+            if path.name not in {src.rsplit("/", 1)[-1] for _, src in entries}:
+                warn(f"unused flashcard image: {rel(path)}")
+
+    # Every picture card must be pre-cached, otherwise the first offline play
+    # can show a blank card.
+    sw_path = ROOT / "sw.js"
+    if sw_path.exists():
+        sw = sw_path.read_text(encoding="utf-8")
+        sources = {src for _, src in entries}
+        for src in sorted(sources):
+            if src not in sw:
+                error(f"sw.js CORE is missing picture card {src}")
+        for src in sorted(set(re.findall(r"'(flashcards/[^']+\.png)'", sw)) - sources):
+            warn(f"sw.js CORE lists an unused picture card {src}")
+    else:
+        error("sw.js is missing")
+    print(f"  picture cards: {len(seen)} words")
 
 
 def check_interest_keys(text: str, word_ids: set[str]) -> None:
@@ -295,7 +341,8 @@ def main() -> int:
     check_actions(actions)
     check_packs(data.get("packs", []), word_ids)
     check_audio(words, actions)
-    check_art_keys(text, word_ids)
+    art_ids = check_art_keys(text, word_ids)
+    check_flashcards(text, word_ids, art_ids)
     check_interest_keys(text, word_ids)
     check_web_manifest()
 

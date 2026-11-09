@@ -1,10 +1,10 @@
 /* Momo PWA service worker.
- * Shell and audio have separate caches:
+ * Shell (including picture cards) and audio have separate caches:
  *   - bump VERSION for shell/UI changes;
  *   - bump AUDIO_CACHE only when audio files change.
  * That way a normal deploy keeps the downloaded audio instead of wiping it.
  * Old `momo-static-*` caches (shell + audio together) are migrated on activate. */
-const VERSION = 'v4';
+const VERSION = 'v6';
 const SHELL_CACHE = 'momo-shell-' + VERSION;
 const AUDIO_CACHE = 'momo-audio-v1';
 const LEGACY_PREFIX = 'momo-static-';
@@ -18,7 +18,26 @@ const CORE = [
   SCOPE + 'icons/icon-512.png',
   SCOPE + 'icons/icon-maskable-512.png',
   SCOPE + 'icons/apple-touch-icon.png',
-  SCOPE + 'icons/favicon-32.png'
+  SCOPE + 'icons/favicon-32.png',
+  SCOPE + 'flashcards/share.png',
+  SCOPE + 'flashcards/move.png',
+  SCOPE + 'flashcards/fall.png',
+  SCOPE + 'flashcards/get_dressed.png',
+  SCOPE + 'flashcards/prepare.png',
+  SCOPE + 'flashcards/push.png',
+  SCOPE + 'flashcards/catch.png',
+  SCOPE + 'flashcards/blow.png',
+  SCOPE + 'flashcards/take_off.png',
+  SCOPE + 'flashcards/put_on.png',
+  SCOPE + 'flashcards/donkey.png',
+  SCOPE + 'flashcards/skirt.png',
+  SCOPE + 'flashcards/dress.png',
+  SCOPE + 'flashcards/belt.png',
+  SCOPE + 'flashcards/yogurt.png',
+  SCOPE + 'flashcards/cashews.png',
+  SCOPE + 'flashcards/snack.png',
+  SCOPE + 'flashcards/papers.png',
+  SCOPE + 'flashcards/sky.png'
 ];
 
 self.addEventListener('install', (event) => {
