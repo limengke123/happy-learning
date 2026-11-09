@@ -49,7 +49,7 @@
 |---|---|---|
 | 英语 | L1 单词句 | `An apple. Find the apple.` |
 | 英语 | L2 两句话（默认） | `It's red and round, and it grows on a tree. Find the apple.` |
-| 英语 | L3 听描述猜 | `It's red and round, and it grows on a tree. Which one is it?` |
+| 英语 | L3 听描述猜 | `It is a round fruit that can be red or green, and it comes from an orchard. When you bite into it, it is juicy and sweet. Which one is it?` |
 | 法语 | L1 简短 | `Une pomme. Trouve la pomme.` |
 | 法语 | L2 形容句 | `C'est une pomme rouge et ronde. Trouve la pomme.` |
 | 法语 | L3 听描述猜（默认） | `C'est un fruit rond et rouge. On peut le croquer. Trouve la bonne image.` |
@@ -153,7 +153,7 @@ iPad 上玩：
 ### 离线
 
 - 首次在线打开后，界面本身会被 Service Worker 缓存；之后断网也能打开。
-- 想让**音频**也离线：家长设置 → **离线使用** →「下载离线音频（约 17 MB）」。下载完成后，飞行模式也能完整玩。
+- 想让**音频**也离线：家长设置 → **离线使用** →「下载离线音频（约 21 MB）」。下载完成后，飞行模式也能完整玩。
 - 不下载全部音频也可以；某段音频第一次播放时，Service Worker 会缓存一份完整文件（媒体元素发 Range / 服务器回 206 时也会补抓完整版），之后离线可用。
 
 > **重要：** Service Worker / PWA 安装需要 **HTTPS 或 localhost**。  
@@ -163,10 +163,10 @@ iPad 上玩：
 
 改代码后如果发现还是旧界面，把 `sw.js` 里的 `VERSION` 加一（当前 `v4`）。
 
-- 普通发版只会清掉旧的 shell 缓存（`momo-shell-*`），音频缓存 `momo-audio-v1` 会保留；不会让家长重新下载 14 MB。
-- 只有改了音频内容（增删词、改 prompt、替换录音）时才需要同时加 `AUDIO_CACHE` 的版本号；旧音频缓存会在 activate 时清掉。
+- 普通发版只会清掉旧的 shell 缓存（`momo-shell-*`），音频缓存 `momo-audio-v2` 会保留；不会让家长重新下载 21 MB。
+- 只有改了音频内容（增删词、改 prompt、替换录音）时才需要同时加 `AUDIO_CACHE` 的版本号；旧音频缓存会在 activate 时清掉。这次英语 L3 录音变长，所以音频缓存从 v1 升到了 v2，升级后需要重新点一次「下载离线音频」才能离线。
 - 页面不再硬编码缓存名：`index.html` 通过 `postMessage` 向当前 Service Worker 查询音频缓存名，避免两个文件里的版本号对不上。
-- 从旧版（`momo-static-*`）升级时，Service Worker 会先把旧缓存里的音频迁移到 `momo-audio-v1`，再删旧缓存。
+- 从旧版（`momo-static-*`）升级时，Service Worker 会先把旧缓存里的音频迁移到 `momo-audio-v2`，再删旧缓存。
 
 ---
 
@@ -329,7 +329,7 @@ python3 -m pip install edge-tts
 - 1024×768（iPad 横屏）、390×844（手机竖屏）、844×390（手机横屏）；
 - 双语完整 8 次：8 个不同概念、结算页 8 个词、8 颗星；4 英 + 4 法；
 - 单语 6 次：6 个不同词，全部为英文；
-- 英语 L1 / L2 / L3 与法语 L1 / L2 / L3 分别切换，预览句、实际播放文件、徽章等级一致；法语 L3 的 101 条描述都不出现答案词，`fr/*_prompt3.mp3` 全部生成并可播放；
+- 英语 L1 / L2 / L3 与法语 L1 / L2 / L3 分别切换，预览句、实际播放文件、徽章等级一致；英语 L3 的 101 条长描述和法语 L3 的 101 条描述都不出现答案词，`en/*_prompt3.mp3` 与 `fr/*_prompt3.mp3` 全部生成并可播放；
 - 错误路径：第一次错 → 卡片变暗；第二次错 → 目标卡发光；再点对 → 正常进入下一题；
 - 暂停/继续、长按设置、刷新后进度保留；
 - `file://` 直接打开可正常开始；
