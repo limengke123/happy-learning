@@ -1426,6 +1426,7 @@
     var sheet = $('.settings-sheet');
     if (sheet) sheet.scrollTop = 0;
     $('#settings').classList.add('open');
+    refreshOfflineButton();
   }
 
   function closeSettings() {
@@ -1472,6 +1473,32 @@
   function fetchWithTimeout(url, ms) {
     if (!window.AbortSignal || typeof AbortSignal.timeout !== 'function') return fetch(url);
     return fetch(url, { signal: AbortSignal.timeout(ms) });
+  }
+
+  async function refreshOfflineButton() {
+    var btn = $('#btn-offline');
+    var status = $('#offline-status');
+    if (!btn || !('caches' in window)) return;
+    var cacheName = await getAudioCacheName();
+    if (!cacheName) return;
+    var list;
+    try {
+      list = await fetchWithTimeout('audio/manifest.json?v=3', 15000).then(function (r) { return r.json(); });
+    } catch (e) { return; }
+    if (!Array.isArray(list) || !list.length) return;
+    var cache = await caches.open(cacheName);
+    var done = 0;
+    for (var i = 0; i < list.length; i++) {
+      var hit = await cache.match(new URL(list[i], location.href).href);
+      if (hit && hit.status === 200) done++;
+    }
+    if (done >= list.length) {
+      btn.textContent = '离线音频已缓存 ✓';
+      status.textContent = '已缓存 ' + done + ' / ' + list.length + ' 段，断网也能玩。';
+    } else {
+      btn.textContent = '下载离线音频（约 21 MB）';
+      if (done > 0) status.textContent = '已缓存 ' + done + ' / ' + list.length + ' 段，可继续下载剩余部分。';
+    }
   }
 
   async function cacheAllAudio() {
