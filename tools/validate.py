@@ -102,6 +102,27 @@ def check_word(word: object, seen_ids: set[str]) -> str | None:
     foils = word.get("foils", [])
     if not isinstance(foils, list):
         error(f"{word_id}: foils must be a list")
+
+    for lang in LANGS:
+        block = word.get(lang)
+        if not isinstance(block, dict):
+            continue
+        alts = block.get("alts", {})
+        if not isinstance(alts, dict):
+            error(f"{word_id}.{lang}: alts must be an object")
+            continue
+        for level, variants in alts.items():
+            if level not in {"2", "3"}:
+                error(f"{word_id}.{lang}: alts level must be 2 or 3, got {level!r}")
+                continue
+            if not isinstance(variants, list) or not variants:
+                error(f"{word_id}.{lang}: alts[{level}] must be a non-empty list")
+                continue
+            if len(variants) > 2:
+                error(f"{word_id}.{lang}: alts[{level}] has too many variants")
+            for index, variant in enumerate(variants):
+                if not isinstance(variant, str) or not variant.strip():
+                    error(f"{word_id}.{lang}: alts[{level}] variant {index + 1} is empty")
     return word_id
 
 
@@ -167,13 +188,19 @@ def check_l3_prompts(words: list) -> None:
         if not isinstance(word, dict) or not isinstance(word.get("id"), str):
             continue
         for lang, forms in (("en", _english_forms(word)), ("fr", _french_forms(word))):
-            prompts = word.get(lang, {}).get("prompts", [])
+            block = word.get(lang, {})
+            prompts = block.get("prompts", [])
             if not isinstance(prompts, list) or len(prompts) < 3:
                 continue
-            checked += 1
-            for form in forms:
-                if _contains(form, prompts[2]):
-                    error(f"{word['id']}.{lang}: L3 prompt contains the answer form {form!r}")
+            l3_texts = [prompts[2]]
+            alts = block.get("alts", {})
+            if isinstance(alts, dict) and isinstance(alts.get("3"), list):
+                l3_texts.extend(alts["3"])
+            for text in l3_texts:
+                checked += 1
+                for form in forms:
+                    if _contains(form, text):
+                        error(f"{word['id']}.{lang}: L3 prompt contains the answer form {form!r}")
     print(f"  L3 prompts: {checked} checked")
 
 
@@ -267,6 +294,14 @@ def expected_audio(words: list, actions: list) -> set[str]:
                 for index in range(len(prompts)):
                     suffix = "_prompt" if index == 0 else f"_prompt{index + 1}"
                     paths.add(f"audio/{lang}/{word_id}{suffix}.mp3")
+            alts = block.get("alts") if isinstance(block, dict) else None
+            if isinstance(alts, dict):
+                for level, variants in alts.items():
+                    if not isinstance(variants, list):
+                        continue
+                    for index in range(len(variants)):
+                        suffix = f"_prompt{level}{chr(98 + index)}"
+                        paths.add(f"audio/{lang}/{word_id}{suffix}.mp3")
             paths.add(f"audio/{lang}/{word_id}_praise.mp3")
     for action in actions:
         if not isinstance(action, dict) or not isinstance(action.get("id"), str):

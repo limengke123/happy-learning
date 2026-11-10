@@ -65,6 +65,11 @@ def build_jobs(data):
                 # Advanced prompts are longer; read them a little brisker.
                 rate = RATES[lang] if i == 0 else "-8%"
                 jobs.append((lang, f"{word['id']}{suffix}", prompt, rate))
+            alts = word[lang].get("alts") or {}
+            for level, variants in alts.items():
+                for i, prompt in enumerate(variants):
+                    suffix = f"_prompt{level}{chr(98 + i)}"
+                    jobs.append((lang, f"{word['id']}{suffix}", prompt, "-8%"))
             jobs.append((lang, f"{word['id']}_praise", word[lang]["praise"], RATES[lang]))
         for action in data["actions"]:
             jobs.append((lang, action["id"], action[lang], RATES[lang]))

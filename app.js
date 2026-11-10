@@ -293,6 +293,15 @@
       if (n > 0) days[key] = n;
     });
     p.days = days;
+
+    var altPicks = {};
+    var rawAltPicks = p.altPicks && typeof p.altPicks === 'object' ? p.altPicks : {};
+    Object.keys(rawAltPicks).forEach(function (key) {
+      if (!/^[a-z0-9_]+:(en|fr):[123]$/.test(key)) return;
+      var n = Number(rawAltPicks[key]);
+      if (Number.isInteger(n) && n >= 0 && n <= 2) altPicks[key] = n;
+    });
+    p.altPicks = altPicks;
     return p;
   }
 
@@ -335,11 +344,30 @@
     var word = BY_ID[item.id][item.lang];
     var level = Math.min(item.level || levelFor(item.lang), word.prompts.length);
     var index = level - 1;
+    var alts = word.alts && word.alts[String(level)];
+    var variant = Math.max(0, Math.min(Number(item.variant) || 0, alts ? alts.length : 0));
+    var suffix = index === 0 ? '' : String(index + 1);
+    if (variant > 0) suffix += String.fromCharCode(97 + variant); // b, c
     return {
-      text: word.prompts[index],
-      file: item.lang + '/' + item.id + '_prompt' + (index === 0 ? '' : String(index + 1)),
-      level: level
+      text: variant > 0 ? alts[variant - 1] : word.prompts[index],
+      file: item.lang + '/' + item.id + '_prompt' + suffix,
+      level: level,
+      variant: variant
     };
+  }
+
+  function pickVariant(id, lang, level) {
+    var word = BY_ID[id][lang];
+    var alts = word.alts && word.alts[String(level)];
+    var count = 1 + (alts ? alts.length : 0);
+    if (count <= 1) return 0;
+    var key = id + ':' + lang + ':' + level;
+    var last = progress.altPicks[key];
+    var pool = [];
+    for (var i = 0; i < count; i++) if (i !== last) pool.push(i);
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    progress.altPicks[key] = pick;
+    return pick;
   }
 
   var state = {
@@ -745,7 +773,9 @@
     }
 
     var queue = picked.map(function (c, i) {
-      return { id: c.id, lang: assignments[i], foils: pickFoils(c.id, 2) };
+      var lang = assignments[i];
+      var level = levelFor(lang);
+      return { id: c.id, lang: lang, foils: pickFoils(c.id, 2), variant: pickVariant(c.id, lang, level) };
     });
 
     var breakAt = Math.floor(queue.length / 2);
@@ -1483,7 +1513,7 @@
     if (!cacheName) return;
     var list;
     try {
-      list = await fetchWithTimeout('audio/manifest.json?v=3', 15000).then(function (r) { return r.json(); });
+      list = await fetchWithTimeout('audio/manifest.json?v=4', 15000).then(function (r) { return r.json(); });
     } catch (e) { return; }
     if (!Array.isArray(list) || !list.length) return;
     var cache = await caches.open(cacheName);
@@ -1496,7 +1526,7 @@
       btn.textContent = '离线音频已缓存 ✓';
       status.textContent = '已缓存 ' + done + ' / ' + list.length + ' 段，断网也能玩。';
     } else {
-      btn.textContent = '下载离线音频（约 21 MB）';
+      btn.textContent = '下载离线音频（约 35 MB）';
       if (done > 0) status.textContent = '已缓存 ' + done + ' / ' + list.length + ' 段，可继续下载剩余部分。';
     }
   }
@@ -1518,14 +1548,14 @@
     if (!cacheName) {
       status.textContent = '离线缓存需要 HTTPS 或 localhost，并等应用加载完成；刷新后再试。';
       btn.disabled = false;
-      btn.textContent = '下载离线音频（约 21 MB）';
+      btn.textContent = '下载离线音频（约 35 MB）';
       return;
     }
 
     try {
       // Version the manifest URL so a returning client does not read the old
       // 727-entry list from the service-worker cache after new clips ship.
-      var list = await fetchWithTimeout('audio/manifest.json?v=3', 15000).then(function (r) { return r.json(); });
+      var list = await fetchWithTimeout('audio/manifest.json?v=4', 15000).then(function (r) { return r.json(); });
       if (!Array.isArray(list)) throw new Error('bad audio manifest');
       var cache = await caches.open(cacheName);
       var done = 0;
@@ -1570,7 +1600,7 @@
     } catch (e) {
       status.textContent = '下载失败，请检查网络后重试。';
       btn.disabled = false;
-      btn.textContent = '下载离线音频（约 21 MB）';
+      btn.textContent = '下载离线音频（约 35 MB）';
     }
   }
 
