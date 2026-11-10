@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Generate the bilingual audio clips used by index.html.
+"""Generate the bilingual audio clips used by the app.
 
-The vocabulary lives in the `word-data` JSON block inside index.html, so this
-script has a single source of truth. Run with:
+The vocabulary lives in `word-data.js`, so this script has a single source of
+truth. Run with:
 
     python3 tools/generate_audio.py            # only missing files
     python3 tools/generate_audio.py --force    # regenerate everything
@@ -24,7 +24,7 @@ except ImportError:
     sys.exit("Please install edge-tts first: pip install edge-tts")
 
 ROOT = Path(__file__).resolve().parent.parent
-HTML = ROOT / "index.html"
+DATA_FILE = ROOT / "word-data.js"
 AUDIO = ROOT / "audio"
 TMP = AUDIO / "_tmp"
 
@@ -48,15 +48,12 @@ GENERIC = {
 
 
 def load_data():
-    text = HTML.read_text(encoding="utf-8")
-    m = re.search(
-        r'<script id="word-data" type="application/json">(.*?)</script>',
-        text,
-        re.S,
-    )
-    if not m:
-        sys.exit("Could not find the word-data block in index.html")
-    return json.loads(m.group(1))
+    text = DATA_FILE.read_text(encoding="utf-8")
+    start = text.find("{")
+    end = text.rfind("}")
+    if start < 0 or end <= start:
+        sys.exit("Could not find the word-data object in word-data.js")
+    return json.loads(text[start:end + 1])
 
 
 def build_jobs(data):

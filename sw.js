@@ -4,7 +4,7 @@
  *   - bump AUDIO_CACHE only when audio files change.
  * That way a normal deploy keeps the downloaded audio instead of wiping it.
  * Old `momo-static-*` caches (shell + audio together) are migrated on activate. */
-const VERSION = 'v8';
+const VERSION = 'v9';
 const SHELL_CACHE = 'momo-shell-' + VERSION;
 const AUDIO_CACHE = 'momo-audio-v2';
 const LEGACY_PREFIX = 'momo-static-';
@@ -13,6 +13,9 @@ const AUDIO_PREFIX = new URL('audio/', SCOPE).pathname;
 const CORE = [
   SCOPE,
   SCOPE + 'index.html',
+  SCOPE + 'styles.css',
+  SCOPE + 'word-data.js',
+  SCOPE + 'app.js',
   SCOPE + 'manifest.webmanifest',
   SCOPE + 'icons/icon-192.png',
   SCOPE + 'icons/icon-512.png',

@@ -13,11 +13,13 @@ from __future__ import annotations
 import json
 import re
 import sys
+import unicodedata
 from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-HTML = ROOT / "index.html"
+DATA_FILE = ROOT / "word-data.js"
+APP = ROOT / "app.js"
 AUDIO = ROOT / "audio"
 AUDIO_MANIFEST = AUDIO / "manifest.json"
 WEB_MANIFEST = ROOT / "manifest.webmanifest"
@@ -44,18 +46,18 @@ def rel(path: Path) -> str:
     return path.resolve().relative_to(ROOT).as_posix()
 
 
-def load_word_data(text: str) -> dict:
-    match = re.search(
-        r'<script id="word-data" type="application/json">(.*?)</script>',
-        text,
-        re.S,
-    )
-    if not match:
-        raise SystemExit("index.html: cannot find the word-data JSON block")
+def load_word_data(path: Path) -> dict:
+    text = path.read_text(encoding="utf-8")
+    if "MOMO_DATA" not in text:
+        raise SystemExit(f"{rel(path)}: cannot find window.MOMO_DATA")
+    start = text.find("{")
+    end = text.rfind("}")
+    if start < 0 or end <= start:
+        raise SystemExit(f"{rel(path)}: cannot find the word-data object")
     try:
-        return json.loads(match.group(1))
+        return json.loads(text[start:end + 1])
     except json.JSONDecodeError as exc:
-        raise SystemExit(f"index.html: word-data is not valid JSON: {exc}") from exc
+        raise SystemExit(f"{rel(path)}: word-data is not valid JSON: {exc}") from exc
 
 
 def check_word(word: object, seen_ids: set[str]) -> str | None:
@@ -101,6 +103,78 @@ def check_word(word: object, seen_ids: set[str]) -> str | None:
     if not isinstance(foils, list):
         error(f"{word_id}: foils must be a list")
     return word_id
+
+
+EN_EXTRA_FORMS = {
+    "cashew nuts": ["cashew nuts", "cashew", "nuts"],
+    "get dressed": ["get dressed", "dressed", "dress"],
+    "take off": ["take off", "take", "off"],
+    "put on": ["put on", "put", "on"],
+    "in front of": ["in front of", "front"],
+    "next to": ["next to", "next"],
+    "in": ["in"],
+}
+
+FR_VERB_FORMS = {
+    "partager": ["partager", "partage"],
+    "bouger": ["bouger", "bouge"],
+    "tomber": ["tomber", "tombe"],
+    "préparer": ["préparer", "prépare"],
+    "pousser": ["pousser", "pousse"],
+    "attraper": ["attraper", "attrape"],
+    "souffler": ["souffler", "souffle"],
+    "enlever": ["enlever", "enlève"],
+    "mettre": ["mettre", "met", "mets"],
+    "sourire": ["sourire", "sourit"],
+    "s'habiller": ["s'habiller", "habiller", "habille"],
+}
+
+
+def _norm(text: str) -> str:
+    return unicodedata.normalize("NFC", text.lower())
+
+
+def _contains(form: str, text: str) -> bool:
+    form = _norm(form)
+    return bool(re.search(r"(?<!\w)" + re.escape(form) + r"(?!\w)", _norm(text)))
+
+
+def _english_forms(word: dict) -> set[str]:
+    phrase = word["en"]["phrase"].strip()
+    core = re.sub(r"^(a|an|the)\s+", "", phrase, flags=re.I)
+    forms = {phrase, core}
+    forms.update(EN_EXTRA_FORMS.get(core.lower(), []))
+    return {form for form in forms if form}
+
+
+def _french_forms(word: dict) -> set[str]:
+    phrase = word["fr"]["phrase"].strip()
+    core = re.sub(r"^(un|une|le|la|les|du|des)\s+", "", phrase, flags=re.I)
+    core = re.sub(r"^(de la|de l')\s*", "", core, flags=re.I)
+    core = re.sub(r"^l'", "", core, flags=re.I)
+    forms = {phrase, core}
+    forms.update(FR_VERB_FORMS.get(core, []))
+    for part in re.split(r"[\s-]+", core):
+        if len(part) > 2 and part not in {"une", "les", "des", "avec", "pour"}:
+            forms.add(part)
+    return {form for form in forms if form}
+
+
+def check_l3_prompts(words: list) -> None:
+    """The third prompt must describe the word, not name it."""
+    checked = 0
+    for word in words:
+        if not isinstance(word, dict) or not isinstance(word.get("id"), str):
+            continue
+        for lang, forms in (("en", _english_forms(word)), ("fr", _french_forms(word))):
+            prompts = word.get(lang, {}).get("prompts", [])
+            if not isinstance(prompts, list) or len(prompts) < 3:
+                continue
+            checked += 1
+            for form in forms:
+                if _contains(form, prompts[2]):
+                    error(f"{word['id']}.{lang}: L3 prompt contains the answer form {form!r}")
+    print(f"  L3 prompts: {checked} checked")
 
 
 def check_actions(actions: object) -> None:
@@ -245,7 +319,7 @@ def check_audio(words: list, actions: list) -> None:
 def check_art_keys(text: str, word_ids: set[str]) -> set[str]:
     match = re.search(r"var ART = \{(.*?)\n  \};", text, re.S)
     if not match:
-        warn("could not find the ART block in index.html; skipping art check")
+        warn("could not find the ART block in app.js; skipping art check")
         return set()
     art_ids = set(re.findall(r"^    ([a-z0-9_]+):\s*$", match.group(1), re.M))
     for art_id in sorted(art_ids - word_ids):
@@ -257,7 +331,7 @@ def check_art_keys(text: str, word_ids: set[str]) -> set[str]:
 def check_flashcards(text: str, word_ids: set[str], art_ids: set[str]) -> None:
     match = re.search(r"var FLASHCARDS = \{(.*?)\n  \};", text, re.S)
     if not match:
-        error("index.html: cannot find the FLASHCARDS block")
+        error("app.js: cannot find the FLASHCARDS block")
         return
     entries = re.findall(r"^    ([a-z0-9_]+):\s*'([^']+)'", match.group(1), re.M)
     seen: set[str] = set()
@@ -299,10 +373,31 @@ def check_flashcards(text: str, word_ids: set[str], art_ids: set[str]) -> None:
     print(f"  picture cards: {len(seen)} words")
 
 
+def check_shell_assets() -> None:
+    sw_path = ROOT / "sw.js"
+    if not sw_path.exists():
+        error("sw.js is missing")
+        return
+    sw = sw_path.read_text(encoding="utf-8")
+    match = re.search(r"const CORE = \[(.*?)\n\];", sw, re.S)
+    if not match:
+        error("sw.js: cannot find CORE")
+        return
+    assets = re.findall(r"SCOPE \+ '([^']+)'", match.group(1))
+    required = {"index.html", "styles.css", "word-data.js", "app.js", "manifest.webmanifest"}
+    missing = sorted(required - set(assets))
+    for asset in missing:
+        error(f"sw.js CORE is missing {asset}")
+    for asset in assets:
+        if not (ROOT / asset).exists():
+            error(f"sw.js CORE references missing file {asset}")
+    print(f"  shell assets: {len(assets)}")
+
+
 def check_interest_keys(text: str, word_ids: set[str]) -> None:
     match = re.search(r"var INTEREST = \{([^}]*)\};", text)
     if not match:
-        warn("could not find the INTEREST block in index.html; skipping check")
+        warn("could not find the INTEREST block in app.js; skipping check")
         return
     for word_id in re.findall(r"([a-z0-9_]+):\s*true", match.group(1)):
         if word_id not in word_ids:
@@ -325,8 +420,8 @@ def check_web_manifest() -> None:
 
 
 def main() -> int:
-    text = HTML.read_text(encoding="utf-8")
-    data = load_word_data(text)
+    app_text = APP.read_text(encoding="utf-8")
+    data = load_word_data(DATA_FILE)
 
     words = data.get("words")
     actions = data.get("actions")
@@ -339,13 +434,15 @@ def main() -> int:
     word_ids: set[str] = set()
     for word in words:
         check_word(word, word_ids)
+    check_l3_prompts(words)
     check_foils(words, word_ids)
     check_actions(actions)
     check_packs(data.get("packs", []), word_ids)
     check_audio(words, actions)
-    art_ids = check_art_keys(text, word_ids)
-    check_flashcards(text, word_ids, art_ids)
-    check_interest_keys(text, word_ids)
+    art_ids = check_art_keys(app_text, word_ids)
+    check_flashcards(app_text, word_ids, art_ids)
+    check_interest_keys(app_text, word_ids)
+    check_shell_assets()
     check_web_manifest()
 
     pos_counts = Counter(word.get("pos") for word in words if isinstance(word, dict))
